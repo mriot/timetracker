@@ -3,7 +3,7 @@
     import { quintOut } from "svelte/easing";
     import type { Readable } from "svelte/store";
     import { crossfade } from "svelte/transition";
-    import { bindFocus } from "../lib/actions/bind-focus";
+    import { editState } from "../lib/actions/bind-focus";
     import { keybind } from "../lib/actions/keybind";
     import type { AppController } from "../lib/app.controller";
     import { Booking } from "../lib/booking";
@@ -50,10 +50,12 @@
     </thead>
     <tbody>
         {#each $bookingsStore as booking (booking.id)}
+            <!-- NOTE: action editState before the focusout event to verify the booking's edit state before trying to sort -->
             <tr
+                use:editState={booking}
+                on:focusout={() => appController.sortBookingsByTime(booking)}
                 in:receive={{ key: booking.id }}
                 out:send={{ key: booking.id }}
-                use:bindFocus={booking}
                 animate:flip={{ duration: 250 }}
                 class:has-time-gap={booking.hasTimeGap}
             >
@@ -61,22 +63,16 @@
                     <input
                         type="time"
                         bind:value={booking.from}
-                        on:blur={() => appController.sortBookingsByTime(booking)}
                         class:has-time-overlap={booking.overlapsFrom}
                         autofocus={!booking.from.isFilled() && booking.id === $bookingsStore.at(-1)?.id}
                     />
                 </td>
                 <td>
-                    <input
-                        type="time"
-                        bind:value={booking.to}
-                        on:blur={() => appController.sortBookingsByTime(booking)}
-                        class:has-time-overlap={booking.overlapsTo}
-                    />
+                    <input type="time" bind:value={booking.to} class:has-time-overlap={booking.overlapsTo} />
                 </td>
                 <td>{@html booking.formatDuration()}</td>
                 <td>
-                    <select bind:value={booking.task} on:blur={() => appController.sortBookingsByTime(booking)}>
+                    <select bind:value={booking.task}>
                         {#each $tasksStore as task}
                             <option value={task} selected={task === booking.task}>{task}</option>
                         {/each}

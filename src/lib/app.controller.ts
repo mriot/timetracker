@@ -85,14 +85,13 @@ export class AppController {
     }
 
     sortBookingsByTime(triggeringBooking?: Booking) {
-        // don't sort if the triggering booking is not fully filled out
-        if (triggeringBooking && !triggeringBooking.isReady()) {
+        if (!triggeringBooking?.isReady() || triggeringBooking.isBeingEdited) {
             return;
         }
 
         this.bookings.update((bookings) =>
             bookings.sort((bookingA, bookingB) => {
-                if (!bookingB.isReady()) return 0; // don't sort new (unfilled) bookings
+                if (!bookingB.isReady()) return 0; // don't sort unfinished bookings
                 return bookingA.isBefore(bookingB) ? -1 : 1;
             })
         );
@@ -139,8 +138,6 @@ export class AppController {
         const bookings = get(this.bookings);
 
         bookings.reduce((prevBooking: Booking, booking: Booking) => {
-            if (!prevBooking) return booking;
-
             const timeDifference = booking.from.toMinutes() - prevBooking.to.toMinutes();
             prevBooking.hasTimeGap = timeDifference > 0;
 

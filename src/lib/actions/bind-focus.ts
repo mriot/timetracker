@@ -1,26 +1,21 @@
 import type { Booking } from "../booking";
 
-export function bindFocus(node: HTMLElement, booking: Booking) {
+export function editState(node: HTMLElement, booking: Booking) {
     if (!booking.isReady()) {
-        console.log("activated", booking);
-        booking.isActive = true;
+        booking.isBeingEdited = true;
     }
 
     const handleFocusIn = (evt: FocusEvent) => {
-        if (!booking.isActive) {
-            console.log("started editing");
-            booking.isActive = true;
-        }
+        booking.isBeingEdited = true;
 
-        if (evt.relatedTarget && node.contains(evt.relatedTarget as Node)) {
-            console.log("still editing");
-        }
+        // if (evt.relatedTarget && node.contains(evt.relatedTarget as Node)) {
+        //     console.log("still editing");
+        // }
     };
 
     const handleFocusOut = (evt: FocusEvent) => {
-        if (booking.isActive && !node.contains(evt.relatedTarget as Node)) {
-            console.log("stopped editing");
-            booking.isActive = false;
+        if (booking.isBeingEdited && !node.contains(evt.relatedTarget as Node)) {
+            booking.isBeingEdited = false;
         }
     };
 
