@@ -5,7 +5,7 @@
     import Modal from "./components/Modal.svelte";
 
     let taskWorkTimeMap = new Map<string, number>();
-    let totalWorkTime: string;
+    let totalWorkTimeString: string;
     let debugMode: boolean = false;
     let modalOpen: boolean = false;
 
@@ -22,7 +22,7 @@
         // sort by most worked on task
         taskWorkTimeMap = new Map([...taskWorkTimeMap.entries()].sort(([, valueA], [, valueB]) => valueB - valueA));
 
-        totalWorkTime = `${Math.floor(totalWorkMinutes / 60)}h ${totalWorkMinutes % 60}m (${(totalWorkMinutes / 60).toFixed(2)}h)`;
+        totalWorkTimeString = `${Math.floor(totalWorkMinutes / 60)}h ${totalWorkMinutes % 60}m (${(totalWorkMinutes / 60).toFixed(2)}h)`;
     }
 </script>
 
@@ -86,7 +86,7 @@
         <thead>
             <tr>
                 <td colspan="2" class="total-work-time">
-                    ┌─── <span> {totalWorkTime} </span> ───┐
+                    ┌─── <span> {totalWorkTimeString} </span> ───┐
                 </td>
             </tr>
             <tr>
@@ -142,7 +142,7 @@
             {/each}
             <tr>
                 <td colspan="2" class="total-work-time">
-                    └── <span> {totalWorkTime} </span> ──┘
+                    └── <span> {totalWorkTimeString} </span> ──┘
                 </td>
             </tr>
         </tbody>
