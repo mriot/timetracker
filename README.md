@@ -13,7 +13,3 @@ Live demo <https://riotcoding.com/timetracker>
 > Taskmanager
 
 ![image](https://github.com/user-attachments/assets/c087cdb8-96d8-47a7-b79d-034513bec905)
-
-> Popout for easy time transfer
-
-![image](https://github.com/user-attachments/assets/7c1725a1-6dac-42e4-a79d-3216621508fe)
