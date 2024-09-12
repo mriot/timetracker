@@ -36,7 +36,10 @@ export class AppController {
     }
 
     removeBooking(id: number) {
-        this.bookings.update((bookings) => bookings.filter((booking) => booking.id !== id));
+        this.bookings.update((bookings) => {
+            if (bookings.length === 1) return [new Booking("", "")];
+            return bookings.filter((booking) => booking.id !== id);
+        });
     }
 
     clearBookings() {
