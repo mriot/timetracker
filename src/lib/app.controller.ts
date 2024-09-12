@@ -89,12 +89,16 @@ export class AppController {
             return;
         }
 
-        this.bookings.update((bookings) =>
-            bookings.sort((bookingA, bookingB) => {
-                if (!bookingB.isReady()) return 0; // don't sort unfinished bookings
+        this.bookings.update((bookings) => {
+            const unfinishedBookings = bookings.filter((booking) => !booking.isReady());
+            const finishedBookings = bookings.filter((booking) => booking.isReady());
+
+            const sortedBookings = finishedBookings.sort((bookingA, bookingB) => {
                 return bookingA.isBefore(bookingB) ? -1 : 1;
-            })
-        );
+            });
+
+            return [...sortedBookings, ...unfinishedBookings];
+        });
     }
 
     flagOverlappingTimes(): void {
