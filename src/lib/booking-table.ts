@@ -1,6 +1,7 @@
 import type { Readable } from "svelte/motion";
 import { type Writable, derived, get } from "svelte/store";
-import type { Booking } from "./booking";
+import { DEFAULT_TASKS } from "../config";
+import { Booking } from "./booking";
 
 export class BookingTable {
     bookings: Writable<Booking[]>;
@@ -35,16 +36,37 @@ export class BookingTable {
         this.bookings.update((bookings) => bookings.filter((booking) => booking.id !== id));
     }
 
-    getTasks() {
-        return derived(this.tasks, ($tasks) => $tasks);
+    clearBookings() {
+        this.bookings.update(() => [new Booking("00:00", "00:00")]);
     }
 
     addTask(task: string) {
-        this.tasks.update((tasks) => [...tasks, task]);
+        this.tasks.update((tasks) => [task, ...tasks]);
     }
 
     removeTask(task: string) {
         this.tasks.update((tasks) => tasks.filter((t) => t !== task));
+    }
+
+    resetTasks() {
+        this.tasks.update(() => DEFAULT_TASKS);
+    }
+
+    moveTask(task: string, direction: "up" | "down") {
+        this.tasks.update((tasks) => {
+            const index = tasks.indexOf(task);
+            if (index === -1) return tasks;
+
+            let newIndex;
+            if (direction === "up") {
+                newIndex = index === 0 ? tasks.length - 1 : index - 1;
+            } else {
+                newIndex = index === tasks.length - 1 ? 0 : index + 1;
+            }
+
+            [tasks[index], tasks[newIndex]] = [tasks[newIndex], tasks[index]];
+            return tasks;
+        });
     }
 
     sortBookingsByTime() {
