@@ -1,9 +1,19 @@
 # TimeTracker
 
-A simple time tracking app that collects zero data and operates entirely locally in your browser.
+A simple time tracker that collects absolutely no data and runs entirely within your browser.
 
-The current version is hosted at <https://riotcoding.com/timetracker>
+Live demo <https://riotcoding.com/timetracker>
 
 ---
 
-Built with Svelte ❤️
+> Some bookings with a 30 minutes break (thick line) and overlapping times (red border)
+
+![image](https://github.com/user-attachments/assets/538b7612-b3b9-4f21-bb20-f515057f8b10)
+
+> Taskmanager
+
+![image](https://github.com/user-attachments/assets/c087cdb8-96d8-47a7-b79d-034513bec905)
+
+> Popout for easy time transfer
+
+![image](https://github.com/user-attachments/assets/7c1725a1-6dac-42e4-a79d-3216621508fe)
