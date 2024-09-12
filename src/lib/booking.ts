@@ -57,7 +57,7 @@ export class Booking {
 
     calculateDuration(): number {
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (!this.from || !this.to) return 0;
+        if (!this.from?.isFilled() || !this.to?.isFilled()) return 0; // might be called before both are set
         return this.to.minutesBetween(this.from);
     }
 
