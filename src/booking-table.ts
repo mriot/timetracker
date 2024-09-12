@@ -7,6 +7,7 @@ export class BookingTable {
     tasks: Writable<string[]>;
 
     totalWorkTimeString: Readable<string>;
+    taskWorkTimeMap: Readable<Map<string, string>>;
 
     constructor(bookings: Writable<Booking[]>, tasks: Writable<string[]>) {
         this.bookings = bookings;
@@ -14,6 +15,14 @@ export class BookingTable {
 
         this.totalWorkTimeString = derived(this.bookings, () => {
             return this.formatWorkTime(this.getTotalWorkTime());
+        });
+
+        this.taskWorkTimeMap = derived(this.bookings, () => {
+            const taskWorkTimeEntries = Array.from(this.getTotalWorkTimeByTask().entries()).sort(
+                ([, valueA], [, valueB]) => valueB - valueA
+            );
+
+            return new Map(taskWorkTimeEntries.map(([task, workTime]) => [task, this.formatWorkTime(workTime)]));
         });
     }
 
@@ -39,6 +48,18 @@ export class BookingTable {
 
     private getTotalWorkTime(): number {
         return get(this.bookings).reduce((acc, booking) => acc + booking.getWorkMinutes(), 0);
+    }
+
+    private getTotalWorkTimeByTask(): Map<string, number> {
+        const taskWorkTimeMap = new Map<string, number>();
+
+        get(this.bookings).forEach((booking) => {
+            const task = booking.task;
+            const workTime = booking.getWorkMinutes();
+            taskWorkTimeMap.set(task, (taskWorkTimeMap.get(task) ?? 0) + workTime);
+        });
+
+        return taskWorkTimeMap;
     }
 
     private formatWorkTime(totalWorkTime: number) {

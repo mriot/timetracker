@@ -6,29 +6,16 @@
     import { BookingTable } from "./booking-table";
     import { derived, get, type Readable, writable } from "svelte/store";
 
-    let taskWorkTimeMap = new Map<string, number>();
-    let totalWorkTime: Readable<string>;
+    let taskWorkTimeStore: Readable<Map<string, string>>;
+    let totalWorkTimeStore: Readable<string>;
     let debugMode: boolean = false;
     let modalOpen: boolean = false;
 
     const bookingTable = new BookingTable(bookingsStore, tasksStore);
 
-    $: totalWorkTime = bookingTable.totalWorkTimeString;
+    $: totalWorkTimeStore = bookingTable.totalWorkTimeString;
 
-    $: {
-        console.log("Calculating");
-
-        taskWorkTimeMap.clear();
-
-        const totalWorkMinutes = $bookingsStore.reduce((total, booking) => {
-            taskWorkTimeMap.set(booking.task, (taskWorkTimeMap.get(booking.task) || 0) + booking.getWorkMinutes());
-            return total + booking.getWorkMinutes();
-        }, 0);
-
-        // sort by most worked on task
-        taskWorkTimeMap = new Map([...taskWorkTimeMap.entries()].sort(([, valueA], [, valueB]) => valueB - valueA));
-        //totalWorkTimeString = `${Math.floor(totalWorkMinutes / 60)}h ${totalWorkMinutes % 60}m (${(totalWorkMinutes / 60).toFixed(2)}h)`;
-    }
+    $: taskWorkTimeStore = bookingTable.taskWorkTimeMap;
 </script>
 
 <header>
@@ -66,7 +53,7 @@
     <table class="work-times">
         <thead>
             <tr>
-                {#each taskWorkTimeMap.keys() as key}
+                {#each $taskWorkTimeStore.keys() as key}
                     {#if key}
                         <th>
                             <span>
@@ -79,9 +66,9 @@
         </thead>
         <tbody>
             <tr>
-                {#each taskWorkTimeMap.entries() as [key, value]}
+                {#each $taskWorkTimeStore.entries() as [key, value]}
                     {#if key}
-                        <td>{`${Math.floor(value / 60)}h ${value % 60}m (${(value / 60).toFixed(2)}h)`}</td>
+                        <td>{value}</td>
                     {/if}
                 {/each}
             </tr>
@@ -91,7 +78,7 @@
         <thead>
             <tr>
                 <td colspan="2" class="total-work-time">
-                    ┌─── <span> {$totalWorkTime} </span> ───┐
+                    ┌─── <span> {$totalWorkTimeStore} </span> ───┐
                 </td>
             </tr>
             <tr>
@@ -147,7 +134,7 @@
             {/each}
             <tr>
                 <td colspan="2" class="total-work-time">
-                    └── <span> {totalWorkTime} </span> ──┘
+                    └── <span> {$totalWorkTimeStore} </span> ──┘
                 </td>
             </tr>
         </tbody>
