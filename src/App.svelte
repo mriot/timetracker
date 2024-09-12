@@ -1,233 +1,124 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { fade, scale, slide } from "svelte/transition";
-    import { Task } from "./task";
+    import { fade, slide } from "svelte/transition";
+    import { TableRow } from "./table-row";
 
-    let tasks: Task[] = [];
-    let taskNameInput: string = "";
+    let tasks = ["Daily", "Zeiterfassung", "Team-Kommunikation", "Arbeitsplatz"];
+
+    let tableRows: TableRow[] = [
+        new TableRow("10:00", "11:00", "Zeiterfassung"),
+        new TableRow("", "", ""),
+        new TableRow("", "", ""),
+        new TableRow("", "", ""),
+    ];
+
     let hasMounted: boolean = false;
-    let totalWorkMinutes: number;
-    let taskNameEditMode: boolean = false;
+    let totalWorkMinutes: number = 0;
 
     onMount(() => {
-        hasMounted = true;
-        tasks = JSON.parse(localStorage.getItem("tasks") ?? "[]").map(
-            (task: any) => new Task(task.id, task.name, task.times)
-        );
+        // hasMounted = true;
+        // tasks = JSON.parse(localStorage.getItem("tasks") ?? "[]").map(
+        //     (task: any) => new Task(task.id, task.name, task.times)
+        // );
     });
-
-    $: if (hasMounted) {
-        console.table("Tasks updated", tasks as any);
-        localStorage.setItem("tasks", JSON.stringify(tasks.map((task) => task.toJSON())));
-        totalWorkMinutes = tasks.reduce((total, task) => total + task.sumTotalTime(), 0);
-    }
-
-    function addTask(evt: SubmitEvent) {
-        const formData = new FormData(evt.target as HTMLFormElement);
-        const name = (formData.get("text") as string) || "⏱️";
-
-        tasks = [new Task(Math.max(0, ...tasks.map((task) => task.id)) + 1, name, []), ...tasks];
-
-        taskNameInput = "";
-    }
-
-    function removeTask(id: number) {
-        if (confirm("Remove this task?")) {
-            tasks = tasks.filter((task) => task.id !== id);
-        }
-    }
-
-    function addTime(evt: SubmitEvent) {
-        const formElement = evt.target as HTMLFormElement;
-        const formData = new FormData(formElement);
-        const task = tasks.find((task) => task.id === parseInt(formData.get("id") as string));
-
-        if (task) {
-            task.addTime(formData.get("start") as string, formData.get("end") as string);
-            tasks = tasks; // trigger reactivity
-            formElement.reset();
-        }
-    }
-
-    function convertMinutesToTimeString(workMinutes: number) {
-        return `${Math.floor(workMinutes / 60)}h ${workMinutes % 60}m (${(workMinutes / 60).toFixed(2)}h)`;
-    }
 </script>
 
 <header>
-    <hgroup>
-        <h1>TimeTracker</h1>
-        <span>{convertMinutesToTimeString(totalWorkMinutes)}</span>
-    </hgroup>
-</header>
-
-<div class="nav">
-    <details class="dropdown">
-        <summary>☰</summary>
+    <nav>
         <ul>
             <li>
-                <label>
-                    <input type="checkbox" bind:checked={taskNameEditMode} />
-                    Edit task names
-                </label>
-            </li>
-            <li>
-                <input
-                    type="reset"
-                    on:click={() => {
-                        if (confirm("Remove all tasks?")) tasks = [];
-                    }}
-                    value="Delete all tasks"
-                />
-            </li>
-            <li>
-                <input
-                    type="button"
-                    value="About"
-                    on:click={() => {
-                        alert("All data is stored locally in your browser, with nothing sent to any server.");
-                    }}
-                />
+                <strong>TimeTracker</strong>
+                <!-- <hgroup>
+                    <small>Total Work Time</small>
+                </hgroup> -->
             </li>
         </ul>
-    </details>
+        <ul>
+            <li>
+                <input type="button" value="Add Task" />
+            </li>
+        </ul>
+    </nav>
+</header>
 
-    <form role="group" on:submit|preventDefault={addTask}>
-        <input
-            type="text"
-            name="text"
-            placeholder="Task name"
-            aria-label="Text"
-            tabindex="0"
-            bind:value={taskNameInput}
-        />
-        <input type="submit" value="Add" />
-    </form>
-</div>
+<hr />
 
-<section class="grid">
-    {#each tasks as task (task.id)}
-        <article class="task" in:scale out:fade>
-            {#if taskNameEditMode}
-                <input type="text" bind:value={task.name} />
-            {:else}
-                <h2>{task.name}</h2>
-            {/if}
+<main>
+    <table>
+        <thead>
+            <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Duration</th>
+                <th>Task</th>
+                <th>Options</th>
+                <th>ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {#each tableRows as row (row.id)}
+                <tr transition:fade>
+                    <td>
+                        <input type="time" bind:value={row.from} />
+                    </td>
+                    <td>
+                        <input type="time" bind:value={row.to} />
+                    </td>
+                    <td>{row.formatDuration()}</td>
+                    <td>
+                        <select>
+                            {#each tasks as task}
+                                <option value={task} selected={task === row.task}>{task}</option>
+                            {/each}
+                        </select>
+                    </td>
+                    <td>
+                        <button
+                            on:click={() => {
+                                confirm("Remove this row?") && row.remove(); // TODO find a better way
+                            }}
+                        >
+                            <span>✕</span>
+                        </button>
+                    </td>
+                    <td>{row.id}</td>
+                </tr>
+            {/each}
+            <tr>
+                <td colspan="2" class="total-work-time">
+                    └── <span> 07h 15m (7.25h) </span> ──┘
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <button
+        on:click={() => {
+            tableRows = [...tableRows, new TableRow("", "")];
+        }}
+    >
+        Add Row
+    </button>
+</main>
 
-            <hr />
-
-            <h3 class="task-work-time">{convertMinutesToTimeString(task.sumTotalTime())}</h3>
-
-            <div class="delete-task-btn" on:click={() => removeTask(task.id)}>✕</div>
-
-            <ul>
-                {#each task.times as time}
-                    <li in:slide out:slide>
-                        <div class="time-row">
-                            <span>
-                                {time.start} - {time.end}
-                            </span>
-                            <span
-                                class="delete-time-btn"
-                                on:click={() => {
-                                    if (confirm("Remove this time?")) {
-                                        task.removeTime(time.id);
-                                        tasks = tasks; // trigger reactivity
-                                    }
-                                }}
-                            >
-                                ✕
-                            </span>
-                        </div>
-                    </li>
-                {/each}
-            </ul>
-            <form on:submit|preventDefault={addTime}>
-                <!-- workaround: https://github.com/picocss/pico/issues/425 -->
-                <input type="hidden" name="id" value={task.id} />
-                <fieldset role="group">
-                    <input type="time" name="start" required />
-                    <input type="time" name="end" required />
-                    <input type="submit" value="Add" />
-                </fieldset>
-            </form>
-        </article>
-    {/each}
-</section>
-
-<style>
-    header {
-        text-align: center;
+<style lang="scss">
+    header strong {
+        font-size: 1.5rem;
     }
 
-    /* workaround: the nav element had trouble to display everything on one line */
-    .nav {
-        position: sticky;
-        display: flex;
-        top: 0.5rem;
-        gap: 0.5rem;
-        width: 100%;
-        z-index: 1;
-    }
+    table {
+        input[type="time"],
+        select {
+            margin: 0;
+            height: auto;
+            padding: 0.5em;
 
-    .nav > * {
-        box-shadow: 0 0rem 0.5rem rgba(0, 0, 0, 0.5);
-    }
+            &:not(select) {
+                text-align: center;
+            }
+        }
 
-    .nav summary {
-        width: max-content;
-    }
-
-    .nav input[type="reset"],
-    .nav input[type="button"] {
-        height: auto;
-        margin-right: inherit;
-        margin-bottom: 0;
-        margin-left: inherit;
-        padding: calc(var(--pico-nav-link-spacing-vertical) - var(--pico-border-width) * 2)
-            var(--pico-nav-link-spacing-horizontal);
-    }
-
-    /* https://css-tricks.com/an-auto-filling-css-grid-with-max-columns/ */
-    .grid {
-        --grid-column-count: 3;
-        --grid-layout-gap: 1rem;
-        --grid-item--min-width: 350px;
-
-        --gap-count: calc(var(--grid-column-count) - 1);
-        --total-gap-width: calc(var(--gap-count) * var(--grid-layout-gap));
-        --grid-item--max-width: calc((100% - var(--total-gap-width)) / var(--grid-column-count));
-
-        display: grid;
-        gap: var(--grid-layout-gap);
-        grid-template-columns: repeat(
-            auto-fill,
-            minmax(max(var(--grid-item--min-width), var(--grid-item--max-width)), 1fr)
-        );
-    }
-
-    .task {
-        position: relative;
-        margin: 0;
-    }
-
-    .task-work-time {
-        text-align: right;
-    }
-
-    .time-row {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .delete-task-btn {
-        position: absolute;
-        top: 0.2rem;
-        right: 0.5rem;
-        cursor: pointer;
-    }
-
-    .delete-time-btn {
-        cursor: pointer;
+        .total-work-time {
+            text-align: center;
+        }
     }
 </style>
