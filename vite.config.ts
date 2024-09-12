@@ -5,4 +5,11 @@ import { defineConfig } from "vite";
 export default defineConfig({
     plugins: [svelte()],
     base: "./",
+    css: {
+        preprocessorOptions: {
+            scss: {
+                quietDeps: true,
+            },
+        },
+    },
 });
