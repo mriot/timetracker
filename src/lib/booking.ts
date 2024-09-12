@@ -44,14 +44,14 @@ export class Booking {
         return this.from.isFilled() && this.to.isFilled() && this.task.length > 0;
     }
 
-    // TODO: we should date compare here prob. Currently no support for crossing midnight.
+    // TODO: add support for crossing midnight
     isBefore(other: Booking): boolean {
         return this.from.toMinutes() <= other.from.toMinutes();
     }
 
-    // TODO: we should date compare here prob. Currently no support for crossing midnight.
+    // TODO: add support for crossing midnight
     hasOverlap(other: Booking): boolean {
-        return this.to.toMinutes() > other.from.toMinutes();
+        return this.to.toMinutes() > other.from.toMinutes() && this.from.toMinutes() < other.to.toMinutes();
     }
 
     calculateDuration(): number {

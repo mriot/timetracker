@@ -91,7 +91,10 @@ export class AppController {
         }
 
         this.bookings.update((bookings) =>
-            bookings.sort((bookingA, bookingB) => (bookingA.isBefore(bookingB) ? -1 : 1))
+            bookings.sort((bookingA, bookingB) => {
+                if (!bookingB.isReady()) return 0; // don't sort new (unfilled) bookings
+                return bookingA.isBefore(bookingB) ? -1 : 1;
+            })
         );
     }
 

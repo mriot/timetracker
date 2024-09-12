@@ -59,19 +59,17 @@
                     <input
                         type="time"
                         bind:value={booking.from}
+                        on:blur={() => appController.sortBookingsByTime(booking)}
                         class:has-time-overlap={booking.overlapsFrom}
                         autofocus={!booking.from.isFilled() && booking.id === $bookingsStore.at(-1)?.id}
-                        on:blur={() => appController.sortBookingsByTime(booking)}
-                        on:input={() => appController.flagOverlappingTimes()}
                     />
                 </td>
                 <td>
                     <input
                         type="time"
                         bind:value={booking.to}
-                        class:has-time-overlap={booking.overlapsTo}
                         on:blur={() => appController.sortBookingsByTime(booking)}
-                        on:input={() => appController.flagOverlappingTimes()}
+                        class:has-time-overlap={booking.overlapsTo}
                     />
                 </td>
                 <td>{@html booking.formatDuration()}</td>
