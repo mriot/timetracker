@@ -99,7 +99,7 @@
 </table>
 <button
     on:click={() => appController.addBooking(new Booking("", ""))}
-    use:keybind={{ ctrl: true, key: "a", trigger: "click" }}
+    use:keybind={{ ctrl: true, shift: true, key: "a", trigger: "click" }}
 >
     Add booking
 </button>
