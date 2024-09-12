@@ -1,16 +1,18 @@
 <script lang="ts">
+    import { flip } from "svelte/animate";
+    import { quintOut } from "svelte/easing";
     import { type Readable } from "svelte/store";
-    import { crossfade, fade } from "svelte/transition";
+    import { crossfade, slide } from "svelte/transition";
     import { Booking } from "./booking";
     import { BookingTable } from "./booking-table";
     import { bookingsStore, tasksStore } from "./store";
-    import { quintOut } from "svelte/easing";
-    import { flip } from "svelte/animate";
+    import TaskManager from "./TaskManager.svelte";
 
     let taskWorkTimeStore: Readable<Map<string, string>>;
     let totalWorkTimeStore: Readable<string>;
     let debugMode: boolean = false;
     let modalOpen: boolean = false;
+    let showTaskManager: boolean = false;
 
     const bookingTable = new BookingTable(bookingsStore, tasksStore);
 
@@ -48,16 +50,10 @@
                     <summary>☰ Options</summary>
                     <ul>
                         <li>
-                            <a
-                                href="#"
-                                on:click={() => {
-                                    modalOpen = true;
-                                    //const newtask = prompt();
-                                    //newtask && tasksStore.update((tasks) => [...tasks, newtask]);
-                                }}
-                            >
-                                Add task
-                            </a>
+                            <label>
+                                <input type="checkbox" bind:checked={showTaskManager} />
+                                Manage Tasks
+                            </label>
                         </li>
                         <li>
                             <a
@@ -87,6 +83,13 @@
 
 <hr />
 
+{#if showTaskManager}
+    <div transition:slide>
+        <TaskManager {bookingTable}></TaskManager>
+        <hr />
+    </div>
+{/if}
+
 <main>
     <table class="work-times">
         <thead>
@@ -112,6 +115,7 @@
             </tr>
         </tbody>
     </table>
+    <!-- ----------------------------------------- -->
     <table class="bookings">
         <thead>
             <tr>

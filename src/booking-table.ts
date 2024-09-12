@@ -17,7 +17,7 @@ export class BookingTable {
             return this.formatWorkTime(this.getTotalWorkTime());
         });
 
-        this.taskWorkTimeMap = derived(this.bookings, () => {
+        this.taskWorkTimeMap = derived([this.bookings, this.tasks], () => {
             // sort by total work time in descending order
             const taskWorkTimeEntries = Array.from(this.getTotalWorkTimeByTask().entries()).sort(
                 ([, valueA], [, valueB]) => valueB - valueA
@@ -59,7 +59,7 @@ export class BookingTable {
         const taskWorkTimeMap = new Map<string, number>();
 
         get(this.bookings).forEach((booking) => {
-            const task = booking.task;
+            const task = get(this.tasks).includes(booking.task) ? booking.task : "Unknown";
             const workTime = booking.getWorkMinutes();
             taskWorkTimeMap.set(task, (taskWorkTimeMap.get(task) ?? 0) + workTime);
         });
