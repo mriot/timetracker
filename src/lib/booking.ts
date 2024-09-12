@@ -6,7 +6,7 @@ export class Booking {
     #to: string;
 
     constructor(from: string, to: string, task?: string, id?: number) {
-        this.id = id ?? Math.floor(Math.random() * 9999);
+        this.id = id ?? crypto.getRandomValues(new Uint32Array(1))[0]!;
         this.#from = from;
         this.#to = to;
         this.task = task ?? "";
