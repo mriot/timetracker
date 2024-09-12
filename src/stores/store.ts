@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import { DEFAULT_TASKS } from "../config";
 import { Booking } from "../lib/booking";
 
 // TODO mapFn type and make it optional
@@ -24,8 +25,4 @@ export const bookingsStore = localStorageStore<Booking[]>(
     (item: any) => new Booking(item.from, item.to, item.task, item.id)
 );
 
-export const tasksStore = localStorageStore<string[]>(
-    "tasks",
-    ["Daily", "Zeiterfassung", "Team-Kommunikation", "Arbeitsplatz"],
-    (item: any) => item
-);
+export const tasksStore = localStorageStore<string[]>("tasks", DEFAULT_TASKS, (item: any) => item);
