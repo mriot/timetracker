@@ -9,6 +9,7 @@ export class Booking {
     task: string;
     overlapsFrom = false;
     overlapsTo = false;
+    hasTimeGap = false;
     #from!: BookingTime;
     #to!: BookingTime;
 

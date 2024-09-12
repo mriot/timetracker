@@ -21,6 +21,7 @@ export class AppController {
 
         this.bookings.subscribe(() => {
             this.flagOverlappingTimes();
+            this.flagGapTimes();
         });
 
         this.totalWorkTimeString = derived(this.bookings, () => {
@@ -129,6 +130,19 @@ export class AppController {
 
             return null;
         }, null);
+    }
+
+    flagGapTimes(): void {
+        const bookings = get(this.bookings);
+
+        bookings.reduce((prevBooking: Booking, booking: Booking) => {
+            if (!prevBooking) return booking;
+
+            const timeDifference = booking.from.toMinutes() - prevBooking.to.toMinutes();
+            prevBooking.hasTimeGap = timeDifference > 0;
+
+            return booking;
+        });
     }
 
     private getTotalWorkTime(): number {

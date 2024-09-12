@@ -49,7 +49,12 @@
     </thead>
     <tbody>
         {#each $bookingsStore as booking (booking.id)}
-            <tr in:receive={{ key: booking.id }} out:send={{ key: booking.id }} animate:flip>
+            <tr
+                in:receive={{ key: booking.id }}
+                out:send={{ key: booking.id }}
+                animate:flip={{ duration: 250 }}
+                class:hasTimeGap={booking.hasTimeGap}
+            >
                 <td>
                     <input
                         type="time"
@@ -133,6 +138,18 @@
 
         .center {
             text-align: center;
+        }
+
+        tr.hasTimeGap {
+            td {
+                border-bottom: 0.4rem solid var(--pico-table-border-color);
+                padding-bottom: 0.6rem;
+            }
+
+            // we can't apply margin on the affected TR/TD - so we fake it by adding padding on the next sibling
+            & + tr td {
+                padding-top: 0.6rem;
+            }
         }
 
         .overlap {
