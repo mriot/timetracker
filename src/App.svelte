@@ -129,7 +129,8 @@
                         </select>
                     </td>
                     <td class="center">
-                        <button
+                        <div
+                            style="cursor: pointer;"
                             on:click={() => {
                                 if (confirm("Remove this row?")) {
                                     bookingTable.removeBooking(booking.id);
@@ -137,7 +138,7 @@
                             }}
                         >
                             <span>✕</span>
-                        </button>
+                        </div>
                     </td>
                     {#if debugMode}
                         <td>{booking.id}</td>
