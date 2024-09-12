@@ -17,7 +17,7 @@ export class BookingTable {
 
     getFormattedDuration(): string {
         const duration = this.bookings.reduce((acc, booking) => {
-            return acc + booking.calculateElapsedMinutes();
+            return acc + booking.getWorkMinutes();
         }, 0);
 
         return `${Math.floor(duration / 60)}h ${duration % 60}m (${(duration / 60).toFixed(2)}h)`;

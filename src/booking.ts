@@ -10,12 +10,12 @@ export class Booking {
         this._from = from;
         this._to = to;
         this.task = task ?? "";
-        this.duration = this.calculateElapsedMinutes();
+        this.duration = this.getWorkMinutes();
     }
 
     set from(value: string) {
         this._from = value;
-        this.duration = this.calculateElapsedMinutes();
+        this.duration = this.getWorkMinutes();
     }
 
     get from(): string {
@@ -24,14 +24,14 @@ export class Booking {
 
     set to(value: string) {
         this._to = value;
-        this.duration = this.calculateElapsedMinutes();
+        this.duration = this.getWorkMinutes();
     }
 
     get to(): string {
         return this._to;
     }
 
-    calculateElapsedMinutes(): number {
+    getWorkMinutes(): number {
         if (!this._from || !this._to) return 0;
 
         const [startHours, startMinutes] = this.from.split(":").map(Number);

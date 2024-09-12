@@ -10,7 +10,7 @@ function localStorageStore<T>(key: string, initialValue: T, mapFn: any) {
 
     store.subscribe((value) => {
         if (!initialized) return (initialized = true);
-        console.log("Store updated", value);
+        console.log(`Store '${key}' updated`, value);
         localStorage.setItem(key, JSON.stringify(value));
     });
 

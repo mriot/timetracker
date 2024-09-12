@@ -2,23 +2,26 @@
     import { fade } from "svelte/transition";
     import { Booking } from "./booking";
     import { bookingsStore, tasksStore } from "./store";
+    import Modal from "./components/Modal.svelte";
 
     let taskWorkTimeMap = new Map<string, number>();
     let totalWorkTime: string;
     let debugMode: boolean = false;
+    let modalOpen: boolean = false;
 
     $: {
+        console.log("Calculating");
+
         taskWorkTimeMap.clear();
 
         const totalWorkMinutes = $bookingsStore.reduce((total, booking) => {
-            taskWorkTimeMap.set(
-                booking.task,
-                (taskWorkTimeMap.get(booking.task) || 0) + booking.calculateElapsedMinutes()
-            );
-            return total + booking.calculateElapsedMinutes();
+            taskWorkTimeMap.set(booking.task, (taskWorkTimeMap.get(booking.task) || 0) + booking.getWorkMinutes());
+            return total + booking.getWorkMinutes();
         }, 0);
 
-        taskWorkTimeMap = taskWorkTimeMap;
+        // sort by most worked on task
+        taskWorkTimeMap = new Map([...taskWorkTimeMap.entries()].sort(([, valueA], [, valueB]) => valueB - valueA));
+
         totalWorkTime = `${Math.floor(totalWorkMinutes / 60)}h ${totalWorkMinutes % 60}m (${(totalWorkMinutes / 60).toFixed(2)}h)`;
     }
 </script>
@@ -61,11 +64,7 @@
                 {#each taskWorkTimeMap.keys() as key}
                     {#if key}
                         <th>
-                            <span
-                                data-tooltip={$bookingsStore
-                                    .filter((booking) => booking.task === key)
-                                    .map((booking) => " " + booking.from + " - " + booking.to)}
-                            >
+                            <span>
                                 {key}
                             </span>
                         </th>
@@ -108,7 +107,14 @@
                         <input type="time" bind:value={booking.from} />
                     </td>
                     <td>
-                        <input type="time" bind:value={booking.to} />
+                        <input
+                            type="time"
+                            bind:value={booking.to}
+                            on:blur={() => {
+                                console.log("Sorting");
+                                bookingsStore.update((rows) => rows.sort((a, b) => a.from.localeCompare(b.from)));
+                            }}
+                        />
                     </td>
                     <td>{booking.formatDuration()}</td>
                     <td>
