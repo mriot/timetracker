@@ -31,8 +31,8 @@ export class Booking {
         return this._to;
     }
 
-    calculateElapsedMinutes(): number | undefined {
-        if (!this._from || !this._to) return undefined;
+    calculateElapsedMinutes(): number {
+        if (!this._from || !this._to) return 0;
 
         const [startHours, startMinutes] = this.from.split(":").map(Number);
         const [endHours, endMinutes] = this.to.split(":").map(Number);

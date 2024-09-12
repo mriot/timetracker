@@ -1,21 +1,17 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { fade, slide } from "svelte/transition";
+    import { fade } from "svelte/transition";
     import { Booking } from "./booking";
     import { bookingsStore } from "./store";
     import { tasks } from "./tasks";
 
-    let hasMounted: boolean = false;
-    let totalWorkMinutes: number = 0;
+    let totalWorkTime: string;
 
-    console.log("bookingsStore", $bookingsStore);
-
-    onMount(() => {
-        hasMounted = true;
-    });
-
-    $: if (hasMounted) {
-        // console.table($tableRowStore);
+    $: {
+        const totalWorkMinutes = $bookingsStore.reduce(
+            (total, booking) => total + booking.calculateElapsedMinutes(),
+            0
+        );
+        totalWorkTime = `${Math.floor(totalWorkMinutes / 60)}h ${totalWorkMinutes % 60}m (${(totalWorkMinutes / 60).toFixed(2)}h)`;
     }
 </script>
 
@@ -61,7 +57,7 @@
         <thead>
             <tr>
                 <td colspan="2" class="total-work-time">
-                    ┌─── <span> 07h 15m (7.25h) </span> ───┐
+                    ┌─── <span> {totalWorkTime} </span> ───┐
                 </td>
             </tr>
             <tr>
@@ -106,7 +102,7 @@
             {/each}
             <tr>
                 <td colspan="2" class="total-work-time">
-                    └── <span> 07h 15m (7.25h) </span> ──┘
+                    └── <span> {totalWorkTime} </span> ──┘
                 </td>
             </tr>
         </tbody>
