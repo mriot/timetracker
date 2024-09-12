@@ -188,14 +188,27 @@
             var(--pico-nav-link-spacing-horizontal);
     }
 
+    /* https://css-tricks.com/an-auto-filling-css-grid-with-max-columns/ */
     .grid {
+        --grid-column-count: 3;
+        --grid-layout-gap: 1rem;
+        --grid-item--min-width: 350px;
+
+        --gap-count: calc(var(--grid-column-count) - 1);
+        --total-gap-width: calc(var(--gap-count) * var(--grid-layout-gap));
+        --grid-item--max-width: calc((100% - var(--total-gap-width)) / var(--grid-column-count));
+
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 1rem;
+        gap: var(--grid-layout-gap);
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(max(var(--grid-item--min-width), var(--grid-item--max-width)), 1fr)
+        );
     }
 
     .task {
         position: relative;
+        margin: 0;
     }
 
     .task-work-time {
