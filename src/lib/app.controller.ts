@@ -38,7 +38,7 @@ export class AppController {
     }
 
     clearBookings() {
-        this.bookings.update(() => [new Booking("00:00", "00:00")]);
+        this.bookings.update(() => [new Booking("", "")]);
     }
 
     addTask(task: string) {
