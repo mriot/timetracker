@@ -13,6 +13,8 @@
     let debugMode: boolean = false;
     let showTaskManager: boolean = false;
 
+    const isPopout = window.location.search.includes("popout");
+
     const appController = new AppController(bookingsStore, tasksStore);
 
     $: totalWorkTimeStore = appController.totalWorkTimeString;
@@ -20,13 +22,14 @@
     $: taskWorkTimeStore = appController.taskWorkTimeMap;
 </script>
 
-<header>
-    <Nav bind:showTaskManager bind:debugMode {appController} />
-</header>
+{#if !isPopout}
+    <header>
+        <Nav bind:showTaskManager bind:debugMode {appController} />
+    </header>
+    <hr />
+{/if}
 
-<hr />
-
-{#if showTaskManager}
+{#if showTaskManager && !isPopout}
     <div transition:slide>
         <TaskManager {appController}></TaskManager>
         <hr />
@@ -34,6 +37,9 @@
 {/if}
 
 <main>
-    <TaskWorkTimeTable {taskWorkTimeStore} />
-    <BookingsTable {appController} {totalWorkTimeStore} {debugMode} />
+    <TaskWorkTimeTable {taskWorkTimeStore} stackVertically={isPopout} />
+
+    {#if !isPopout}
+        <BookingsTable {appController} {totalWorkTimeStore} {debugMode} />
+    {/if}
 </main>

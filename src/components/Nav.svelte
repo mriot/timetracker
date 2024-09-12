@@ -4,6 +4,16 @@
     export let appController: AppController;
     export let showTaskManager = false;
     export let debugMode = false;
+
+    let popoutWindow: Window | null = null;
+
+    function popout() {
+        if (popoutWindow?.closed === false) {
+            popoutWindow.focus();
+            return;
+        }
+        popoutWindow = window.open(window.location.href + "?popout", "_blank", "width=400, height=600");
+    }
 </script>
 
 <nav>
@@ -31,15 +41,7 @@
             </a>
         </li>
         <li>
-            <!-- TODO maybe show only the task booking list -->
-            <a
-                href=""
-                on:click|preventDefault={() => {
-                    window.open(window.location.href, "_blank", "width=1000,height=500");
-                }}
-            >
-                Popout
-            </a>
+            <a href="" on:click|preventDefault={popout}> Popout </a>
         </li>
         <li>
             <a
