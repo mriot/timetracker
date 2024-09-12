@@ -4,6 +4,8 @@ export class Booking {
     id: number;
     duration: number | undefined;
     task: string;
+    isOverlappingFrom: boolean = false;
+    isOverlappingTo: boolean = false;
     #from: string;
     #to: string;
 

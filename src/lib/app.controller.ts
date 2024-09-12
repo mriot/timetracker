@@ -73,11 +73,29 @@ export class AppController {
 
     sortBookingsByTime(triggeringBookingId?: number) {
         const booking = get(this.bookings).find((booking) => booking.id === triggeringBookingId);
+
+        this.markOverlappingBookings();
+
         if (booking && (!booking.from || !booking.to || !booking.task)) {
             return;
         }
 
         this.bookings.update((bookings) => bookings.sort((a, b) => a.from.localeCompare(b.from)));
+    }
+
+    // TODO make a visual connection bookings?
+    markOverlappingBookings(): void {
+        const bookings = get(this.bookings);
+
+        bookings.forEach((booking, i, arr) => {
+            const nextBooking = arr[i + 1];
+            if (!nextBooking) return;
+
+            const hasOverlap = booking.to > nextBooking.from;
+
+            booking.isOverlappingTo = hasOverlap;
+            nextBooking.isOverlappingFrom = hasOverlap;
+        });
     }
 
     private getTotalWorkTime(): number {

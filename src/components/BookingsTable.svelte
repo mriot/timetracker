@@ -56,6 +56,7 @@
                         autofocus={!booking.from && booking.id === $bookingsStore.at(-1)?.id}
                         bind:value={booking.from}
                         on:blur={() => appController.sortBookingsByTime(booking.id)}
+                        class:overlapping-from={booking.isOverlappingFrom}
                     />
                 </td>
                 <td>
@@ -63,6 +64,7 @@
                         type="time"
                         bind:value={booking.to}
                         on:blur={() => appController.sortBookingsByTime(booking.id)}
+                        class:overlapping-to={booking.isOverlappingTo}
                     />
                 </td>
                 <td>{@html booking.formatDuration()}</td>
@@ -129,6 +131,12 @@
 
         .center {
             text-align: center;
+        }
+
+        .overlapping-from,
+        .overlapping-to {
+            outline: 1px dashed red;
+            background-image: var(--pico-icon-invalid) !important;
         }
     }
 </style>
