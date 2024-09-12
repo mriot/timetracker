@@ -6,7 +6,8 @@
     let tasks: Task[] = [];
     let taskNameInput: string = "";
     let hasMounted: boolean = false;
-    let totalWorkTime: number;
+    let totalWorkMinutes: number;
+    let taskNameEditMode: boolean = false;
 
     onMount(() => {
         hasMounted = true;
@@ -18,7 +19,7 @@
     $: if (hasMounted) {
         console.table("Tasks updated", tasks as any);
         localStorage.setItem("tasks", JSON.stringify(tasks.map((task) => task.toJSON())));
-        totalWorkTime = tasks.reduce((total, task) => total + task.sumTotalTime(), 0);
+        totalWorkMinutes = tasks.reduce((total, task) => total + task.sumTotalTime(), 0);
     }
 
     function addTask(evt: SubmitEvent) {
@@ -56,36 +57,62 @@
 <header>
     <hgroup>
         <h1>TimeTracker</h1>
-        <span>{convertMinutesToTimeString(totalWorkTime)}</span>
+        <span>{convertMinutesToTimeString(totalWorkMinutes)}</span>
     </hgroup>
-</header>
 
-<nav>
-    <form role="group" on:submit|preventDefault={addTask}>
-        <input
-            type="text"
-            name="text"
-            placeholder="Task Name"
-            aria-label="Text"
-            tabindex="0"
-            bind:value={taskNameInput}
-        />
-        <input type="submit" value="Add" />
-        <input
-            type="reset"
-            value="Clear"
-            class="delete-all-tasks-btn"
-            on:click={() => {
-                if (confirm("Remove all tasks?")) tasks = [];
-            }}
-        />
-    </form>
-</nav>
+    <div class="nav">
+        <details class="dropdown">
+            <summary>☰</summary>
+            <ul>
+                <li>
+                    <label>
+                        <input type="checkbox" bind:checked={taskNameEditMode} />
+                        Edit task names
+                    </label>
+                </li>
+                <li>
+                    <input
+                        type="reset"
+                        on:click={() => {
+                            if (confirm("Remove all tasks?")) tasks = [];
+                        }}
+                        value="Delete all tasks"
+                    />
+                </li>
+                <li>
+                    <input
+                        type="button"
+                        value="About"
+                        on:click={() => {
+                            alert("All data is stored locally in your browser, with nothing sent to any server.");
+                        }}
+                    />
+                </li>
+            </ul>
+        </details>
+
+        <form role="group" on:submit|preventDefault={addTask}>
+            <input
+                type="text"
+                name="text"
+                placeholder="Task name"
+                aria-label="Text"
+                tabindex="0"
+                bind:value={taskNameInput}
+            />
+            <input type="submit" value="Add" />
+        </form>
+    </div>
+</header>
 
 <section class="grid">
     {#each tasks as task (task.id)}
         <article class="task" in:scale out:fade>
-            <h2>{task.name}</h2>
+            {#if taskNameEditMode}
+                <input type="text" bind:value={task.name} />
+            {:else}
+                <h2>{task.name}</h2>
+            {/if}
 
             <hr />
 
@@ -133,6 +160,26 @@
         text-align: center;
     }
 
+    /* workaround: the nav element had trouble to display everything on one line */
+    .nav {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .nav summary {
+        width: max-content;
+    }
+
+    .nav input[type="reset"],
+    .nav input[type="button"] {
+        height: auto;
+        margin-right: inherit;
+        margin-bottom: 0;
+        margin-left: inherit;
+        padding: calc(var(--pico-nav-link-spacing-vertical) - var(--pico-border-width) * 2)
+            var(--pico-nav-link-spacing-horizontal);
+    }
+
     .grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -141,6 +188,7 @@
 
     .task {
         position: relative;
+        min-width: auto;
     }
 
     .task-work-time {
