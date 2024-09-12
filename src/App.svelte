@@ -199,16 +199,6 @@
         width: max-content;
     }
 
-    .nav input[type="reset"],
-    .nav input[type="button"] {
-        height: auto;
-        margin-right: inherit;
-        margin-bottom: 0;
-        margin-left: inherit;
-        padding: calc(var(--pico-nav-link-spacing-vertical) - var(--pico-border-width) * 2)
-            var(--pico-nav-link-spacing-horizontal);
-    }
-
     /* https://css-tricks.com/an-auto-filling-css-grid-with-max-columns/ */
     .grid {
         --grid-column-count: 3;
