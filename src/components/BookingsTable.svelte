@@ -52,6 +52,7 @@
                 <td>
                     <input
                         type="time"
+                        autofocus={!booking.from && booking.id === $bookingsStore.at(-1)?.id}
                         bind:value={booking.from}
                         on:blur={() => appController.sortBookingsByTime(booking.id)}
                     />
