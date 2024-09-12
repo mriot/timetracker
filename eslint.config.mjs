@@ -22,6 +22,7 @@ export default tseslint.config(
         rules: {
             "@typescript-eslint/consistent-type-definitions": ["warn", "type"], // type vs interface
             "@typescript-eslint/no-explicit-any": "warn",
+            "@typescript-eslint/no-unused-vars": "off",
             // "@typescript-eslint/no-inferrable-types": "off",
         },
     }
