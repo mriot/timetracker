@@ -91,7 +91,7 @@ export class AppController {
             const nextBooking = arr[i + 1];
             if (!nextBooking) return;
 
-            const hasOverlap = booking.to > nextBooking.from;
+            const hasOverlap = booking.to && nextBooking.from ? booking.to > nextBooking.from : false;
 
             booking.isOverlappingTo = hasOverlap;
             nextBooking.isOverlappingFrom = hasOverlap;
