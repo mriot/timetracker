@@ -20,7 +20,7 @@ function localStorageStore<T>(key: string, initialValue: T, mapFn: any) {
 export const bookingsStore = localStorageStore<Booking[]>(
     "bookings",
     [new Booking("", "")],
-    (item: any) => new Booking(item.from, item.to, item.task)
+    (item: any) => new Booking(item.from, item.to, item.task, item.id)
 );
 
 export const tasksStore = localStorageStore<string[]>(

@@ -5,8 +5,8 @@ export class Booking {
     private _from: string;
     private _to: string;
 
-    constructor(from: string, to: string, task?: string) {
-        this.id = Math.floor(Math.random() * 999); // TODO
+    constructor(from: string, to: string, task?: string, id?: number) {
+        this.id = id ?? Math.floor(Math.random() * 9999);
         this._from = from;
         this._to = to;
         this.task = task ?? "";

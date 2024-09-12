@@ -1,3 +1,9 @@
+:root {
+    --pico-line-height: 1.25;
+    --pico-spacing: 0.75rem;
+    --pico-font-size: 1rem;
+}
+
 html,
 body {
     margin: 0.5rem 0;

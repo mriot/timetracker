@@ -3,18 +3,25 @@
     import { Booking } from "./booking";
     import { bookingsStore, tasksStore } from "./store";
 
-    let taskMap = new Map<string, number>();
+    let taskWorkTimeMap = new Map<string, number>();
+    let taskCountMap = new Map<string, number>();
     let totalWorkTime: string;
+    let debugMode: boolean = false;
 
     $: {
-        taskMap.clear();
+        taskWorkTimeMap.clear();
+        taskCountMap.clear();
 
         const totalWorkMinutes = $bookingsStore.reduce((total, booking) => {
-            taskMap.set(booking.task, (taskMap.get(booking.task) || 0) + booking.calculateElapsedMinutes());
+            taskWorkTimeMap.set(
+                booking.task,
+                (taskWorkTimeMap.get(booking.task) || 0) + booking.calculateElapsedMinutes()
+            );
+            taskCountMap.set(booking.task, (taskCountMap.get(booking.task) || 0) + 1);
             return total + booking.calculateElapsedMinutes();
         }, 0);
 
-        taskMap = taskMap;
+        taskWorkTimeMap = taskWorkTimeMap;
         totalWorkTime = `${Math.floor(totalWorkMinutes / 60)}h ${totalWorkMinutes % 60}m (${(totalWorkMinutes / 60).toFixed(2)}h)`;
     }
 </script>
@@ -24,9 +31,6 @@
         <ul>
             <li>
                 <strong>TimeTracker</strong>
-                <!-- <hgroup>
-                    <small>Total Work Time</small>
-                </hgroup> -->
             </li>
         </ul>
         <ul>
@@ -39,6 +43,9 @@
                     }}>Add task</a
                 >
             </li>
+            <li>
+                <a href="#" on:click={() => (debugMode = !debugMode)}>Debug</a>
+            </li>
         </ul>
     </nav>
 </header>
@@ -46,23 +53,35 @@
 <hr />
 
 <main>
-    <table>
+    <table class="work-times">
         <thead>
             <tr>
-                {#each taskMap.entries() as [key, value]}
-                    <th>{key}</th>
+                {#each taskWorkTimeMap.keys() as key}
+                    {#if key}
+                        <th>
+                            <span
+                                data-tooltip={$bookingsStore
+                                    .filter((booking) => booking.task === key)
+                                    .map((booking) => " " + booking.from + " - " + booking.to)}
+                            >
+                                {key}
+                            </span>
+                        </th>
+                    {/if}
                 {/each}
             </tr>
         </thead>
         <tbody>
             <tr>
-                {#each taskMap.entries() as [key, value]}
-                    <td>{`${Math.floor(value / 60)}h ${value % 60}m (${(value / 60).toFixed(2)}h)`}</td>
+                {#each taskWorkTimeMap.entries() as [key, value]}
+                    {#if key}
+                        <td>{`${Math.floor(value / 60)}h ${value % 60}m (${(value / 60).toFixed(2)}h)`}</td>
+                    {/if}
                 {/each}
             </tr>
         </tbody>
     </table>
-    <table>
+    <table class="bookings">
         <thead>
             <tr>
                 <td colspan="2" class="total-work-time">
@@ -75,7 +94,9 @@
                 <th>Duration</th>
                 <th>Task</th>
                 <th>Options</th>
-                <th>ID</th>
+                {#if debugMode}
+                    <th>ID</th>
+                {/if}
             </tr>
         </thead>
         <tbody>
@@ -106,7 +127,9 @@
                             <span>✕</span>
                         </button>
                     </td>
-                    <td>{booking.id}</td>
+                    {#if debugMode}
+                        <td>{booking.id}</td>
+                    {/if}
                 </tr>
             {/each}
             <tr>
@@ -124,7 +147,7 @@
             });
         }}
     >
-        Add Row
+        Add booking
     </button>
 </main>
 
@@ -133,7 +156,16 @@
         font-size: 1.5rem;
     }
 
-    table {
+    table.work-times {
+        margin-bottom: 2rem;
+
+        th,
+        td {
+            text-align: center;
+        }
+    }
+
+    table.bookings {
         input[type="time"],
         select {
             margin: 0;
@@ -147,6 +179,7 @@
 
         .total-work-time {
             text-align: center;
+            border: none;
         }
     }
 </style>
