@@ -5,15 +5,15 @@ import { formatWorkTime } from "./utils";
  */
 export class Booking {
     id: number;
-    duration: number | undefined;
+    duration: number;
     task: string;
-    overlapsFrom: boolean = false;
-    overlapsTo: boolean = false;
-    hasGapBefore: boolean = false;
+    overlapsFrom = false;
+    overlapsTo = false;
     #from!: BookingTime;
     #to!: BookingTime;
 
     constructor(from: string, to: string, task?: string, id?: number) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         this.id = id ?? crypto.getRandomValues(new Uint32Array(1))[0]!;
         this.from = from;
         this.to = to;
@@ -54,8 +54,9 @@ export class Booking {
     }
 
     calculateDuration(): number {
-        if (!this.#from || !this.#to) return 0;
-        return this.#to.minutesBetween(this.#from);
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (!this.from || !this.to) return 0;
+        return this.to.minutesBetween(this.from);
     }
 
     formatDuration(): string {

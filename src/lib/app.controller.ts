@@ -76,7 +76,8 @@ export class AppController {
                 newIndex = index === tasks.length - 1 ? 0 : index + 1;
             }
 
-            [tasks[index], tasks[newIndex]] = [tasks[newIndex] as string, tasks[index] as string];
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            [tasks[index], tasks[newIndex]] = [tasks[newIndex]!, tasks[index]!];
 
             return tasks;
         });
@@ -89,17 +90,7 @@ export class AppController {
         }
 
         this.bookings.update((bookings) =>
-            bookings.sort((bookingA, bookingB) => {
-                if (bookingA && (!bookingA.from || !bookingA.to)) {
-                    return 0;
-                }
-
-                if (bookingB && (!bookingB.from || !bookingB.to)) {
-                    return 0;
-                }
-
-                return bookingA.isBefore(bookingB) ? -1 : 1;
-            })
+            bookings.sort((bookingA, bookingB) => (bookingA.isBefore(bookingB) ? -1 : 1))
         );
     }
 
@@ -122,7 +113,7 @@ export class AppController {
                 return null;
             }
 
-            // don't compare with bookings where the time is not set
+            // don't compare with bookings that are not fully filled out
             if (!nextBooking.isReady()) {
                 return null;
             }

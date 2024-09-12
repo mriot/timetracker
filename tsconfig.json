@@ -9,6 +9,7 @@
         "moduleDetection": "force",
         "noUncheckedIndexedAccess": true,
         "noImplicitOverride": true,
+        "strictPropertyInitialization": true,
         "lib": ["es2022", "dom", "dom.iterable"]
     },
     "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"]

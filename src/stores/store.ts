@@ -1,23 +1,24 @@
-import { writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store";
 import { DEFAULT_TASKS } from "../config";
 import { Booking } from "../lib/booking";
 
 /**
- * Creates a store that persists data in the browser's local storage.
+ * Creates a writable Svelte store that persists its value in local storage.
  *
- * @template T - The type of data stored in the store.
- * @param {string} key - The key used to store the data in local storage.
+ * @template T - The type of the store value.
+ * @template U - The transformed type of the store value, if a transform function is provided.
+ * @param {string} key - The key used to store the value in the local storage.
  * @param {T} initialValue - The initial value of the store.
- * @param {Function} [mapFn] - An optional function used to map the stored data before returning it.
- * @returns {Writable<T>} - The writable store object.
+ * @param {(item: U) => U} [transformFn] - Optional transform function to apply to the store value.
+ * @returns {Writable<T>} - The created writable store.
  */
-function createLocalStorageStore<T>(key: string, initialValue: T, mapFn?: Function) {
+function createLocalStorageStore<T, U = T>(key: string, initialValue: T, transformFn?: (item: U) => U): Writable<T> {
     const storedValue = localStorage.getItem(key);
-    const data = storedValue ? JSON.parse(storedValue) : initialValue;
+    const data = storedValue ? (JSON.parse(storedValue) as T) : initialValue;
 
-    const mappedData = mapFn ? data.map(mapFn) : data;
+    const storeData = transformFn && Array.isArray(data) ? (data.map(transformFn) as T) : data;
 
-    const store = writable<T>(mappedData);
+    const store = writable<T>(storeData);
 
     let initialized = false;
     store.subscribe((value) => {
@@ -33,14 +34,12 @@ function createLocalStorageStore<T>(key: string, initialValue: T, mapFn?: Functi
     return store;
 }
 
-/**
- *  ======== STORES ========
- */
+// ======== STORES ========
 
-export const bookingsStore = createLocalStorageStore<Booking[]>(
+export const bookingsStore = createLocalStorageStore<Booking[], Booking>(
     "bookings",
     [new Booking("", "")],
-    (item: any) => new Booking(item.from, item.to, item.task, item.id)
+    (item: Booking) => new Booking(item.from.toString(), item.to.toString(), item.task, item.id)
 );
 
 export const tasksStore = createLocalStorageStore<string[]>("tasks", DEFAULT_TASKS);
