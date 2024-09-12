@@ -46,8 +46,14 @@
             task.addTime(formData.get("start") as string, formData.get("end") as string);
             tasks = tasks; // trigger reactivity
             formElement.reset();
+            sortTasksByMostRecentTime();
+            checkTimeOverlap();
         }
     }
+
+    function sortTasksByMostRecentTime() {}
+
+    function checkTimeOverlap() {}
 
     function convertMinutesToTimeString(workMinutes: number) {
         return `${Math.floor(workMinutes / 60)}h ${workMinutes % 60}m (${(workMinutes / 60).toFixed(2)}h)`;
@@ -67,27 +73,42 @@
         <ul>
             <li>
                 <label>
+                    Edit task names&nbsp;
                     <input type="checkbox" bind:checked={taskNameEditMode} />
-                    Edit task names
                 </label>
             </li>
             <li>
-                <input
-                    type="reset"
+                <a
+                    href="#"
+                    on:click={() => {
+                        if (confirm("Clear all times?")) {
+                            tasks.forEach((task) => (task.times = []));
+                            tasks = tasks; // trigger reactivity
+                        }
+                    }}
+                >
+                    Clear all times
+                </a>
+            </li>
+            <li>
+                <a
+                    href="#"
                     on:click={() => {
                         if (confirm("Remove all tasks?")) tasks = [];
                     }}
-                    value="Delete all tasks"
-                />
+                >
+                    Delete all tasks
+                </a>
             </li>
             <li>
-                <input
-                    type="button"
-                    value="About"
+                <a
+                    href="#"
                     on:click={() => {
                         alert("All data is stored locally in your browser, with nothing sent to any server.");
                     }}
-                />
+                >
+                    About
+                </a>
             </li>
         </ul>
     </details>
