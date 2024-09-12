@@ -1,101 +1,98 @@
 <script lang="ts">
+    import { debounce } from "../lib/actions/debounce";
     import { AppController } from "../lib/app.controller";
-    import { tasksStore } from "../stores/store";
+    import type { ApiKey } from "../lib/types";
+    import { apiKeyStore, tasksStore } from "../stores/store";
+    import ApiKeyManager from "./ApiKeyManager.svelte";
 
     export let appController: AppController;
 
-    let input = "";
-    let selected = "";
+    let selectedTask = "";
     let workPackages: any[] = [];
-    let search = "";
+    let searchQuery = "";
 
-    // const OP_TOKEN = "0d6b669af3cf7aa2869b1cc5dce78ddb50eaa5f476c18bb5ab6ca506f919e0e4";
-    // const myHeaders = new Headers();
-    // myHeaders.append(
-    //     "Authorization",
-    //     "Basic YXBpa2V5OjBkNmI2NjlhZjNjZjdhYTI4NjliMWNjNWRjZTc4ZGRiNTBlYWE1ZjQ3NmMxOGJiNWFiNmNhNTA2ZjkxOWUwZTQ="
-    // );
+    function handleSearch(event: any) {
+        if (event.target.value.length < 3) return;
 
-    // $: {
-    //     fetch(
-    //         `https://wintec.openproject.com/api/v3/work_packages?filters=[{"subjectOrId":{"operator":"**","values":["${search}"]}}]`,
-    //         { headers: myHeaders }
-    //     )
-    //         .then((res) => res.json())
-    //         .then((data) => {
-    //             workPackages = data._embedded.elements.map((pack: any) => pack.subject);
-    //         });
-    // }
+        workPackages = []; // TODO type
+        console.log("Cleared");
 
-    const myHeaders = new Headers();
-    myHeaders.append(
-        "Authorization",
-        "Basic YXBpa2V5OjBkNmI2NjlhZjNjZjdhYTI4NjliMWNjNWRjZTc4ZGRiNTBlYWE1ZjQ3NmMxOGJiNWFiNmNhNTA2ZjkxOWUwZTQ="
-    );
+        $apiKeyStore.forEach(async (ApiKey: ApiKey) => {
+            const params = new URLSearchParams();
+            params.append("apikey", ApiKey.key);
+            params.append("url", ApiKey.url);
+            params.append("filters", `[{"subjectOrId":{"operator":"**","values":["${searchQuery}"]}}]`);
 
-    const requestOptions: RequestInit = {
-        method: "GET",
-        headers: myHeaders,
-        redirect: "follow" as RequestRedirect | undefined,
-    };
+            // TODO dont't hardcode the url
+            const res = await fetch(`https://riotcoding.com/timetracker/proxy.php?${params}`);
+            const json = await res.json();
 
-    fetch(
-        "https://wintec.openproject.com/api/v3/work_packages?filters=[{%22subjectOrId%22:{%22operator%22:%22**%22,%22values%22:[%225509%22]}}]",
-        requestOptions
-    )
-        .then((response) => response.text())
-        .then((result) => console.log(result))
-        .catch((error) => console.error(error));
+            workPackages = [
+                ...workPackages,
+                json._embedded.elements.map((element: any) => `${element.id} ${element.subject}`),
+            ];
+            console.log(workPackages);
+        });
+    }
 </script>
-
-<fieldset>
-    <input type="search" bind:value={search} />
-    <select size="5">
-        {#each workPackages as pack}
-            <option>{pack}</option>
-        {:else}
-            <option disabled>n/a</option>
-        {/each}
-    </select>
-</fieldset>
 
 <div class="grid">
     <div>
-        <select size="5" bind:value={selected}>
+        <select size="5" bind:value={selectedTask}>
             {#each $tasksStore as task}
                 <option>{task}</option>
             {/each}
         </select>
+        <ApiKeyManager />
     </div>
 
     <div>
         <form>
             <fieldset role="group">
-                <input type="text" bind:value={input} placeholder="New task name..." />
-                <button
-                    disabled={input.length < 1}
-                    on:click={() => {
-                        appController.addTask(input);
-                        input = "";
-                        selected = "";
+                {#if $apiKeyStore.length === 0}
+                    <input type="text" placeholder="Create a new task" bind:value={searchQuery} />
+                {:else}
+                    <input
+                        type="text"
+                        placeholder="Search or create a new task"
+                        list="search-results"
+                        bind:value={searchQuery}
+                        use:debounce={{ eventTypeToDebounce: "input" }}
+                        on:debounced={handleSearch}
+                    />
+                    <datalist id="search-results">
+                        {#each workPackages as pack}
+                            <option>{pack}</option>
+                        {/each}
+                    </datalist>
+                {/if}
+                <input
+                    type="submit"
+                    value="Add"
+                    disabled={searchQuery.length < 1}
+                    on:click|preventDefault={() => {
+                        appController.addTask(searchQuery);
+                        searchQuery = "";
+                        selectedTask = "";
                     }}
-                >
-                    Add</button
-                >
+                />
             </fieldset>
         </form>
 
         <div class="controls">
             <fieldset>
-                <button disabled={!selected} on:click={() => appController.moveTask(selected, "up")}> ↑ </button>
-                <button disabled={!selected} on:click={() => appController.moveTask(selected, "down")}> ↓ </button>
-                &nbsp;
+                <button disabled={!selectedTask} on:click={() => appController.moveTask(selectedTask, "up")}>
+                    ↑
+                </button>
+                <button disabled={!selectedTask} on:click={() => appController.moveTask(selectedTask, "down")}>
+                    ↓
+                </button>
                 <button
-                    disabled={!selected}
+                    disabled={!selectedTask}
                     class="secondary"
                     on:click={() => {
-                        confirm(`Delete task ${selected}?`) && appController.removeTask(selected);
-                        selected = "";
+                        confirm(`Delete task ${selectedTask}?`) && appController.removeTask(selectedTask);
+                        selectedTask = "";
                     }}
                 >
                     Remove
@@ -107,11 +104,11 @@
                     on:click={() => {
                         if (confirm("Reset tasks to default?\nThis will delete all custom tasks!")) {
                             appController.resetTasks();
-                            selected = "";
+                            selectedTask = "";
                         }
                     }}
                 >
-                    Reset
+                    Reset tasks
                 </button>
             </div>
         </div>
@@ -122,5 +119,6 @@
     .controls {
         display: flex;
         justify-content: space-between;
+        white-space: nowrap;
     }
 </style>
