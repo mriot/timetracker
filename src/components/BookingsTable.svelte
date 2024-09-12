@@ -3,6 +3,7 @@
     import { quintOut } from "svelte/easing";
     import type { Readable } from "svelte/store";
     import { crossfade } from "svelte/transition";
+    import { bindFocus } from "../lib/actions/bind-focus";
     import { keybind } from "../lib/actions/keybind";
     import type { AppController } from "../lib/app.controller";
     import { Booking } from "../lib/booking";
@@ -52,6 +53,7 @@
             <tr
                 in:receive={{ key: booking.id }}
                 out:send={{ key: booking.id }}
+                use:bindFocus={booking}
                 animate:flip={{ duration: 250 }}
                 class:has-time-gap={booking.hasTimeGap}
             >

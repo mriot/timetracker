@@ -10,6 +10,7 @@ export class Booking {
     overlapsFrom = false;
     overlapsTo = false;
     hasTimeGap = false;
+    isActive = false;
     #from!: BookingTime;
     #to!: BookingTime;
 
