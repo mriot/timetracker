@@ -4,6 +4,10 @@ import { DEFAULT_TASKS } from "../config";
 import { Booking } from "./booking";
 import { formatWorkTime } from "./utils";
 
+/**
+ * This class represents the main controller for the application.
+ * It manages the bookings and tasks, and provides various methods for manipulating them.
+ */
 export class AppController {
     bookings: Writable<Booking[]>;
     tasks: Writable<string[]>;
@@ -16,7 +20,7 @@ export class AppController {
         this.tasks = tasks;
 
         this.bookings.subscribe(() => {
-            this.markOverlappingBookings();
+            this.flagOverlappingTimes();
         });
 
         this.totalWorkTimeString = derived(this.bookings, () => {
@@ -97,11 +101,9 @@ export class AppController {
                 return bookingA.isBefore(bookingB) ? -1 : 1;
             })
         );
-
-        this.markOverlappingBookings();
     }
 
-    markOverlappingBookings(): void {
+    flagOverlappingTimes(): void {
         const bookings = get(this.bookings);
 
         bookings.reduce((prevBooking: Booking | null, booking: Booking, idx: number, arr: Booking[]) => {

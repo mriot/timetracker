@@ -8,15 +8,15 @@ type DebounceOptions = {
 /**
  * Svelte action that debounces an event.
  *
- * Example usage: use:debounce={{ delay: 300, eventTypeToDebounce: "keydown" }} on:debounced={eventHandler}
+ * Example usage: use:debounce={{ delay: 300, eventTypeToDebounce: "keydown" }} on:debounced={yourEventHandler}
  *
- * This will debounce the keydown event on the element this action is bound to.
+ * This will debounce the specified event on the element this action is bound to.
  * If the delay is exceeded, a custom "debounced" event will be dispatched.
  */
 export const debounce: Action<HTMLElement, DebounceOptions> = (node: HTMLElement, options: DebounceOptions) => {
     let timeoutId: number;
 
-    const handleEvent = (event: Event) => {
+    const handleDebounce = (event: Event) => {
         clearTimeout(timeoutId);
 
         timeoutId = setTimeout(() => {
@@ -24,11 +24,11 @@ export const debounce: Action<HTMLElement, DebounceOptions> = (node: HTMLElement
         }, options.delay ?? 300);
     };
 
-    node.addEventListener(options.eventTypeToDebounce, handleEvent);
+    node.addEventListener(options.eventTypeToDebounce, handleDebounce);
 
     return {
         destroy() {
-            node.removeEventListener(options.eventTypeToDebounce, handleEvent);
+            node.removeEventListener(options.eventTypeToDebounce, handleDebounce);
         },
     };
 };

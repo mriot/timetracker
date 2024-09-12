@@ -36,8 +36,6 @@ export const keybind: Action<HTMLElement, KeybindOptions> = (node: HTMLElement, 
     window.addEventListener("keydown", handleKeyDown);
 
     return {
-        update(bar) {},
-
         destroy() {
             window.removeEventListener("keydown", handleKeyDown);
         },

@@ -1,5 +1,8 @@
 import { formatWorkTime } from "./utils";
 
+/**
+ * Represents a booking - a single row in the booking table.
+ */
 export class Booking {
     id: number;
     duration: number | undefined;
@@ -71,6 +74,10 @@ export class Booking {
     }
 }
 
+/**
+ * Represents the time of a booking.
+ * Exposes methods to work with time related calculations.
+ */
 class BookingTime {
     hours: number;
     minutes: number;
