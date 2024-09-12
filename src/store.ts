@@ -22,3 +22,9 @@ export const bookingsStore = localStorageStore<Booking[]>(
     [new Booking("", "")],
     (item: any) => new Booking(item.from, item.to, item.task)
 );
+
+export const tasksStore = localStorageStore<string[]>(
+    "tasks",
+    ["Daily", "Zeiterfassung", "Team-Kommunikation", "Arbeitsplatz"],
+    (item: any) => item
+);

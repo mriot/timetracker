@@ -1,8 +1,7 @@
 <script lang="ts">
     import { fade } from "svelte/transition";
     import { Booking } from "./booking";
-    import { bookingsStore } from "./store";
-    import { tasks } from "./tasks";
+    import { bookingsStore, tasksStore } from "./store";
 
     let totalWorkTime: string;
 
@@ -27,7 +26,13 @@
         </ul>
         <ul>
             <li>
-                <input type="button" value="Add Task" />
+                <a
+                    href="#"
+                    on:click={() => {
+                        const newtask = prompt();
+                        newtask && tasksStore.update((tasks) => [...tasks, newtask]);
+                    }}>Add task</a
+                >
             </li>
         </ul>
     </nav>
@@ -39,7 +44,7 @@
     <table>
         <thead>
             <tr>
-                {#each tasks as task}
+                {#each $tasksStore as task}
                     <th>{task}</th>
                 {/each}
             </tr>
@@ -81,7 +86,7 @@
                     <td>{booking.formatDuration()}</td>
                     <td>
                         <select bind:value={booking.task}>
-                            {#each tasks as task}
+                            {#each $tasksStore as task}
                                 <option value={task} selected={task === booking.task}>{task}</option>
                             {/each}
                         </select>
