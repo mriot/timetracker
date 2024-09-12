@@ -1,25 +1,47 @@
+import { type Writable, get, derived, writable } from "svelte/store";
 import type { Booking } from "./booking";
+import type { Readable } from "svelte/motion";
 
 export class BookingTable {
-    bookings: Booking[] = [];
+    bookings: Writable<Booking[]>;
+    tasks: Writable<string[]>;
 
-    constructor(bookings: Booking[]) {
+    totalWorkTimeString: Readable<string>;
+
+    constructor(bookings: Writable<Booking[]>, tasks: Writable<string[]>) {
         this.bookings = bookings;
+        this.tasks = tasks;
+
+        this.totalWorkTimeString = derived(this.bookings, () => {
+            return this.formatWorkTime(this.getTotalWorkTime());
+        });
     }
 
-    add(booking: Booking) {
-        this.bookings.push(booking);
+    addBooking(booking: Booking) {
+        this.bookings.update((bookings) => [...bookings, booking]);
     }
 
-    remove(booking: Booking) {
-        this.bookings = this.bookings.filter((b) => b.id !== booking.id);
+    removeBooking(id: number) {
+        this.bookings.update((bookings) => bookings.filter((booking) => booking.id !== id));
     }
 
-    getFormattedDuration(): string {
-        const duration = this.bookings.reduce((acc, booking) => {
-            return acc + booking.getWorkMinutes();
-        }, 0);
+    getTasks() {
+        return derived(this.tasks, ($tasks) => $tasks);
+    }
 
-        return `${Math.floor(duration / 60)}h ${duration % 60}m (${(duration / 60).toFixed(2)}h)`;
+    addTask(task: string) {
+        this.tasks.update((tasks) => [...tasks, task]);
+    }
+
+    removeTask(task: string) {
+        this.tasks.update((tasks) => tasks.filter((t) => t !== task));
+    }
+
+    private getTotalWorkTime(): number {
+        return get(this.bookings).reduce((acc, booking) => acc + booking.getWorkMinutes(), 0);
+    }
+
+    private formatWorkTime(totalWorkTime: number) {
+        return `${Math.floor(totalWorkTime / 60)}h ${totalWorkTime % 60}m (${(totalWorkTime / 60).toFixed(2)}h)`;
     }
 }

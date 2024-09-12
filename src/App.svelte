@@ -3,11 +3,17 @@
     import { Booking } from "./booking";
     import { bookingsStore, tasksStore } from "./store";
     import Modal from "./components/Modal.svelte";
+    import { BookingTable } from "./booking-table";
+    import { derived, get, type Readable, writable } from "svelte/store";
 
     let taskWorkTimeMap = new Map<string, number>();
-    let totalWorkTimeString: string;
+    let totalWorkTime: Readable<string>;
     let debugMode: boolean = false;
     let modalOpen: boolean = false;
+
+    const bookingTable = new BookingTable(bookingsStore, tasksStore);
+
+    $: totalWorkTime = bookingTable.totalWorkTimeString;
 
     $: {
         console.log("Calculating");
@@ -21,8 +27,7 @@
 
         // sort by most worked on task
         taskWorkTimeMap = new Map([...taskWorkTimeMap.entries()].sort(([, valueA], [, valueB]) => valueB - valueA));
-
-        totalWorkTimeString = `${Math.floor(totalWorkMinutes / 60)}h ${totalWorkMinutes % 60}m (${(totalWorkMinutes / 60).toFixed(2)}h)`;
+        //totalWorkTimeString = `${Math.floor(totalWorkMinutes / 60)}h ${totalWorkMinutes % 60}m (${(totalWorkMinutes / 60).toFixed(2)}h)`;
     }
 </script>
 
@@ -86,7 +91,7 @@
         <thead>
             <tr>
                 <td colspan="2" class="total-work-time">
-                    ┌─── <span> {totalWorkTimeString} </span> ───┐
+                    ┌─── <span> {$totalWorkTime} </span> ───┐
                 </td>
             </tr>
             <tr>
@@ -128,7 +133,7 @@
                         <button
                             on:click={() => {
                                 if (confirm("Remove this row?")) {
-                                    bookingsStore.update((rows) => rows.filter((row) => row.id !== booking.id));
+                                    bookingTable.removeBooking(booking.id);
                                 }
                             }}
                         >
@@ -142,21 +147,12 @@
             {/each}
             <tr>
                 <td colspan="2" class="total-work-time">
-                    └── <span> {totalWorkTimeString} </span> ──┘
+                    └── <span> {totalWorkTime} </span> ──┘
                 </td>
             </tr>
         </tbody>
     </table>
-    <button
-        on:click={() => {
-            bookingsStore.update((rows) => {
-                rows.push(new Booking("", ""));
-                return rows;
-            });
-        }}
-    >
-        Add booking
-    </button>
+    <button on:click={() => bookingTable.addBooking(new Booking("", ""))}> Add booking </button>
 </main>
 
 <style lang="scss">
