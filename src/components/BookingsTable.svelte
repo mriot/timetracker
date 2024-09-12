@@ -3,7 +3,7 @@
     import { quintOut } from "svelte/easing";
     import type { Readable } from "svelte/store";
     import { crossfade } from "svelte/transition";
-    import { editState } from "../lib/actions/bind-focus";
+    import { editState } from "../lib/actions/edit-state";
     import { keybind } from "../lib/actions/keybind";
     import type { AppController } from "../lib/app.controller";
     import { Booking } from "../lib/booking";
