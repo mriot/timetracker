@@ -1,13 +1,15 @@
-import { writable } from "svelte/store";
-import { TableRow } from "./table-row";
+import { writable, type Writable } from "svelte/store";
+import { Booking } from "./booking";
 
-function localStorageStore<T>(key: string) {
+function localStorageStore<T>(key: string, mapFn: (item: any) => T) {
+    let initialized = false;
     const storedValue = localStorage.getItem(key);
-    const data = storedValue ? JSON.parse(storedValue) : [];
+    const data = storedValue && JSON.parse(storedValue).map(mapFn);
 
     const store = writable<T>(data);
 
     store.subscribe((value) => {
+        if (!initialized) return (initialized = true);
         console.log("Store updated", value);
         localStorage.setItem(key, JSON.stringify(value));
     });
@@ -15,4 +17,7 @@ function localStorageStore<T>(key: string) {
     return store;
 }
 
-export const tableRowStore = localStorageStore<TableRow[]>("bookings");
+export const bookingsStore = localStorageStore<Booking[]>(
+    "bookings",
+    (item: any) => new Booking(item._from, item._to, item.task)
+);

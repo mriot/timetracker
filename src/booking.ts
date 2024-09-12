@@ -1,6 +1,6 @@
-import { tableRowStore } from "./store";
+// import { bookingsStore } from "./store";
 
-export class TableRow {
+export class Booking {
     id: number;
     duration: number | undefined;
     task: string | undefined;
@@ -55,6 +55,6 @@ export class TableRow {
     }
 
     remove() {
-        tableRowStore.update((rows) => rows.filter((row) => row.id !== this.id));
+        // bookingsStore.update((rows) => rows.filter((row) => row.id !== this.id));
     }
 }

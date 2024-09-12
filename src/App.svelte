@@ -1,20 +1,23 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { fade, slide } from "svelte/transition";
-    import { TableRow } from "./table-row";
-    import { tableRowStore } from "./store";
+    import { Booking } from "./booking";
+    import { bookingsStore } from "./store";
     import { tasks } from "./tasks";
 
     let hasMounted: boolean = false;
     let totalWorkMinutes: number = 0;
 
+    let bookings: Booking[] = [];
+
+    console.log("bookingsStore", $bookingsStore);
+
     onMount(() => {
-        tableRowStore.set($tableRowStore.map((row) => new TableRow(row.from, row.to, row.task)));
         hasMounted = true;
     });
 
     $: if (hasMounted) {
-        console.table($tableRowStore);
+        // console.table($tableRowStore);
     }
 </script>
 
@@ -73,32 +76,32 @@
             </tr>
         </thead>
         <tbody>
-            {#each $tableRowStore as row (row.id)}
+            {#each $bookingsStore as booking (booking.id)}
                 <tr transition:fade>
                     <td>
-                        <input type="time" bind:value={row.from} />
+                        <input type="time" bind:value={booking.from} />
                     </td>
                     <td>
-                        <input type="time" bind:value={row.to} />
+                        <input type="time" bind:value={booking.to} />
                     </td>
-                    <td>{row}</td>
+                    <td>{booking.formatDuration()}</td>
                     <td>
-                        <select bind:value={row.task}>
+                        <select bind:value={booking.task}>
                             {#each tasks as task}
-                                <option value={task} selected={task === row.task}>{task}</option>
+                                <option value={task} selected={task === booking.task}>{task}</option>
                             {/each}
                         </select>
                     </td>
                     <td>
                         <button
                             on:click={() => {
-                                confirm("Remove this row?") && row.remove(); // TODO find a better way
+                                confirm("Remove this row?") && booking.remove(); // TODO find a better way
                             }}
                         >
                             <span>✕</span>
                         </button>
                     </td>
-                    <td>{row.id}</td>
+                    <td>{booking.id}</td>
                 </tr>
             {/each}
             <tr>
@@ -110,8 +113,8 @@
     </table>
     <button
         on:click={() => {
-            tableRowStore.update((rows) => {
-                rows.push(new TableRow("", "", ""));
+            bookingsStore.update((rows) => {
+                rows.push(new Booking("", "", ""));
                 return rows;
             });
         }}
