@@ -85,7 +85,7 @@ export class AppController {
             return;
         }
 
-        this.bookings.update((bookings) => bookings.sort((a, b) => a.from.localeCompare(b.from)));
+        this.bookings.update((bookings) => bookings.sort((a, b) => (a.isBefore(b) ? -1 : 1)));
     }
 
     // TODO make a visual connection bookings?
@@ -96,7 +96,7 @@ export class AppController {
             const nextBooking = arr[i + 1];
             if (!nextBooking) return;
 
-            const hasOverlap = booking.to && nextBooking.from ? booking.to > nextBooking.from : false;
+            const hasOverlap = booking.isOverlapping(nextBooking);
 
             booking.isOverlappingTo = hasOverlap;
             nextBooking.isOverlappingFrom = hasOverlap;
@@ -104,7 +104,7 @@ export class AppController {
     }
 
     private getTotalWorkTime(): number {
-        return get(this.bookings).reduce((acc, booking) => acc + booking.getWorkMinutes(), 0);
+        return get(this.bookings).reduce((acc, booking) => acc + booking.calculateDuration(), 0);
     }
 
     private getTotalWorkTimeByTask(): Map<string, number> {
@@ -112,7 +112,7 @@ export class AppController {
 
         get(this.bookings).forEach((booking) => {
             const task = get(this.tasks).includes(booking.task) ? booking.task : "Not assigned";
-            const workTime = booking.getWorkMinutes();
+            const workTime = booking.calculateDuration();
             taskWorkTimeMap.set(task, (taskWorkTimeMap.get(task) ?? 0) + workTime);
         });
 
