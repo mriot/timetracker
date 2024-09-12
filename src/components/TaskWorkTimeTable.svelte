@@ -39,7 +39,7 @@
         <tbody>
             <tr>
                 {#each $taskWorkTimeStore.entries() as [key, value]}
-                    <td>{value}</td>
+                    <td>{@html value}</td>
                 {/each}
             </tr>
         </tbody>

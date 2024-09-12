@@ -33,7 +33,7 @@
     <thead>
         <tr>
             <td colspan="2" class="total-work-time">
-                ┌─── <span> {$totalWorkTimeStore} </span> ───┐
+                ┌─── <span> {@html $totalWorkTimeStore} </span> ───┐
             </td>
         </tr>
         <tr>
@@ -65,7 +65,7 @@
                         on:blur={() => appController.sortBookingsByTime(booking.id)}
                     />
                 </td>
-                <td>{booking.formatDuration()}</td>
+                <td>{@html booking.formatDuration()}</td>
                 <td>
                     <select bind:value={booking.task} on:change={() => appController.sortBookingsByTime(booking.id)}>
                         {#each $tasksStore as task}
@@ -90,11 +90,11 @@
                 {/if}
             </tr>
         {/each}
-        <tr>
+        <!-- <tr>
             <td colspan="2" class="total-work-time">
-                └── <span> {$totalWorkTimeStore} </span> ──┘
+                └── <span> {@html $totalWorkTimeStore} </span> ──┘
             </td>
-        </tr>
+        </tr> -->
     </tbody>
 </table>
 <button

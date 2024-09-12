@@ -2,6 +2,7 @@ import type { Readable } from "svelte/motion";
 import { type Writable, derived, get } from "svelte/store";
 import { DEFAULT_TASKS } from "../config";
 import { Booking } from "./booking";
+import { formatWorkTime } from "./utils";
 
 export class AppController {
     bookings: Writable<Booking[]>;
@@ -15,7 +16,7 @@ export class AppController {
         this.tasks = tasks;
 
         this.totalWorkTimeString = derived(this.bookings, () => {
-            return this.formatWorkTime(this.getTotalWorkTime());
+            return formatWorkTime(this.getTotalWorkTime());
         });
 
         this.taskWorkTimeMap = derived([this.bookings, this.tasks], () => {
@@ -24,7 +25,7 @@ export class AppController {
                 ([, valueA], [, valueB]) => valueB - valueA
             );
 
-            return new Map(taskWorkTimeEntries.map(([task, workTime]) => [task, this.formatWorkTime(workTime)]));
+            return new Map(taskWorkTimeEntries.map(([task, workTime]) => [task, formatWorkTime(workTime)]));
         });
     }
 
@@ -93,9 +94,5 @@ export class AppController {
         });
 
         return taskWorkTimeMap;
-    }
-
-    private formatWorkTime(totalWorkTime: number) {
-        return `${Math.floor(totalWorkTime / 60)}h ${totalWorkTime % 60}m (${(totalWorkTime / 60).toFixed(2)}h)`;
     }
 }
