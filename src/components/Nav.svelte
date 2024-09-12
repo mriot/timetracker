@@ -73,6 +73,7 @@
             color: #7b8495;
             margin-left: 0;
             margin-right: 1rem;
+            opacity: 0.5;
         }
     }
 </style>
