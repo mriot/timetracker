@@ -2,16 +2,30 @@ import { writable } from "svelte/store";
 import { DEFAULT_TASKS } from "../config";
 import { Booking } from "../lib/booking";
 
-// TODO mapFn type and make it optional
-function localStorageStore<T>(key: string, initialValue: T, mapFn: any) {
+/**
+ * Creates a store that persists data in the browser's local storage.
+ *
+ * @template T - The type of data stored in the store.
+ * @param {string} key - The key used to store the data in local storage.
+ * @param {T} initialValue - The initial value of the store.
+ * @param {Function} [mapFn] - An optional function used to map the stored data before returning it.
+ * @returns {Writable<T>} - The writable store object.
+ */
+function createLocalStorageStore<T>(key: string, initialValue: T, mapFn?: Function) {
+    const storedValue = localStorage.getItem(key);
+    const data = storedValue ? JSON.parse(storedValue) : initialValue;
+
+    const mappedData = mapFn ? data.map(mapFn) : data;
+
+    const store = writable<T>(mappedData);
+
     let initialized = false;
-    const storedValue = localStorage.getItem(key) ?? JSON.stringify(initialValue);
-    const data = storedValue && JSON.parse(storedValue).map(mapFn);
-
-    const store = writable<T>(data);
-
     store.subscribe((value) => {
-        if (!initialized) return (initialized = true);
+        // skip the first update to avoid overwriting the stored data with the initial value.
+        if (!initialized) {
+            initialized = true;
+            return;
+        }
         console.log(`Store '${key}' updated`, value);
         localStorage.setItem(key, JSON.stringify(value));
     });
@@ -19,10 +33,10 @@ function localStorageStore<T>(key: string, initialValue: T, mapFn: any) {
     return store;
 }
 
-export const bookingsStore = localStorageStore<Booking[]>(
+export const bookingsStore = createLocalStorageStore<Booking[]>(
     "bookings",
     [new Booking("00:00", "00:00")],
     (item: any) => new Booking(item.from, item.to, item.task, item.id)
 );
 
-export const tasksStore = localStorageStore<string[]>("tasks", DEFAULT_TASKS, (item: any) => item);
+export const tasksStore = createLocalStorageStore<string[]>("tasks", DEFAULT_TASKS);
