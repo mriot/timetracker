@@ -67,7 +67,7 @@
                 </td>
                 <td>{@html booking.formatDuration()}</td>
                 <td>
-                    <select bind:value={booking.task} on:change={() => appController.sortBookingsByTime(booking.id)}>
+                    <select bind:value={booking.task} on:blur={() => appController.sortBookingsByTime(booking.id)}>
                         {#each $tasksStore as task}
                             <option value={task} selected={task === booking.task}>{task}</option>
                         {/each}
