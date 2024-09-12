@@ -138,6 +138,8 @@ export class AppController {
         const bookings = get(this.bookings);
 
         bookings.reduce((prevBooking: Booking, booking: Booking) => {
+            if (!prevBooking.isReady()) return booking;
+
             const timeDifference = booking.from.toMinutes() - prevBooking.to.toMinutes();
             prevBooking.hasTimeGap = timeDifference > 0;
 
