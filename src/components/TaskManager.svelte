@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { BookingTable } from "../lib/booking-table";
+    import { AppController } from "../lib/app.controller";
     import { tasksStore } from "../stores/store";
 
-    export let bookingTable: BookingTable;
+    export let taskBookingController: AppController;
 
     let input = "";
     let selected = "";
@@ -24,7 +24,7 @@
                 <button
                     disabled={input.length < 1}
                     on:click={() => {
-                        bookingTable.addTask(input);
+                        taskBookingController.addTask(input);
                         input = "";
                         selected = "";
                     }}
@@ -36,14 +36,18 @@
 
         <div class="controls">
             <fieldset>
-                <button disabled={!selected} on:click={() => bookingTable.moveTask(selected, "up")}> ↑ </button>
-                <button disabled={!selected} on:click={() => bookingTable.moveTask(selected, "down")}> ↓ </button>
+                <button disabled={!selected} on:click={() => taskBookingController.moveTask(selected, "up")}>
+                    ↑
+                </button>
+                <button disabled={!selected} on:click={() => taskBookingController.moveTask(selected, "down")}>
+                    ↓
+                </button>
                 &nbsp;
                 <button
                     disabled={!selected}
                     class="secondary"
                     on:click={() => {
-                        confirm(`Delete task ${selected}?`) && bookingTable.removeTask(selected);
+                        confirm(`Delete task ${selected}?`) && taskBookingController.removeTask(selected);
                         selected = "";
                     }}
                 >
@@ -55,7 +59,7 @@
                     class="secondary"
                     on:click={() => {
                         if (confirm("Reset tasks to default?\nThis will delete all custom tasks!")) {
-                            bookingTable.resetTasks();
+                            taskBookingController.resetTasks();
                             selected = "";
                         }
                     }}

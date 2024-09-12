@@ -3,7 +3,7 @@ import { type Writable, derived, get } from "svelte/store";
 import { DEFAULT_TASKS } from "../config";
 import { Booking } from "./booking";
 
-export class BookingTable {
+export class AppController {
     bookings: Writable<Booking[]>;
     tasks: Writable<string[]>;
 

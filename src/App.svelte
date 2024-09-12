@@ -5,7 +5,7 @@
     import Nav from "./components/Nav.svelte";
     import TaskManager from "./components/TaskManager.svelte";
     import TaskWorkTimeTable from "./components/TaskWorkTimeTable.svelte";
-    import { BookingTable } from "./lib/booking-table";
+    import { AppController } from "./lib/app.controller";
     import { bookingsStore, tasksStore } from "./stores/store";
 
     let taskWorkTimeStore: Readable<Map<string, string>>;
@@ -14,7 +14,7 @@
     let modalOpen: boolean = false;
     let showTaskManager: boolean = false;
 
-    const bookingTable = new BookingTable(bookingsStore, tasksStore);
+    const bookingTable = new AppController(bookingsStore, tasksStore);
 
     $: totalWorkTimeStore = bookingTable.totalWorkTimeString;
 
@@ -29,7 +29,7 @@
 
 {#if showTaskManager}
     <div transition:slide>
-        <TaskManager {bookingTable}></TaskManager>
+        <TaskManager taskBookingController={bookingTable}></TaskManager>
         <hr />
     </div>
 {/if}

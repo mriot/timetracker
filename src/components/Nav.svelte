@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { BookingTable } from "../lib/booking-table";
+    import { AppController } from "../lib/app.controller";
 
-    export let bookingTable: BookingTable;
+    export let bookingTable: AppController;
     export let showTaskManager = false;
     export let debugMode = false;
 </script>
