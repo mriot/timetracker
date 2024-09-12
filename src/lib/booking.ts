@@ -43,6 +43,14 @@ export class Booking {
         return this.#from.toMinutes() < other.#to.toMinutes() && this.#to.toMinutes() > other.#from.toMinutes();
     }
 
+    hasOverlapFrom(other: Booking): boolean {
+        return this.#from.toMinutes() < other.#from.toMinutes() && this.#to.toMinutes() > other.#from.toMinutes();
+    }
+
+    hasOverlapTo(other: Booking): boolean {
+        return this.#from.toMinutes() < other.#to.toMinutes() && this.#to.toMinutes() > other.#to.toMinutes();
+    }
+
     calculateDuration(): number {
         if (!this.#from || !this.#to) return 0;
         return this.#to.minutesBetween(this.#from);
@@ -76,7 +84,7 @@ class BookingTime {
     static fromString(time: string): BookingTime {
         if (!time) return new BookingTime(-1, -1);
 
-        console.log(time);
+        console.log("BookingTime fromString()", time); // TODO remove
 
         const [hours, minutes] = time.split(":").map(Number);
 

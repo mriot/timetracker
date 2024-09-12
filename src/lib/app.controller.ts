@@ -81,7 +81,10 @@ export class AppController {
 
         this.markOverlappingBookings();
 
-        if (booking && (!booking.from || !booking.to || !booking.task)) {
+        if (
+            booking &&
+            (!booking.from || !booking.to || !booking.task || booking.isOverlappingTo || booking.isOverlappingFrom)
+        ) {
             return;
         }
 
@@ -96,10 +99,7 @@ export class AppController {
             const nextBooking = arr[i + 1];
             if (!nextBooking) return;
 
-            const hasOverlap = booking.isOverlapping(nextBooking);
-
-            booking.isOverlappingTo = hasOverlap;
-            nextBooking.isOverlappingFrom = hasOverlap;
+            // TODO implement
         });
     }
 
