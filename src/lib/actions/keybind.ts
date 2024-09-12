@@ -20,7 +20,10 @@ type KeybindOptions = {
  */
 export const keybind: Action<HTMLElement, KeybindOptions> = (node: HTMLElement, options: KeybindOptions) => {
     const handleKeyDown = (event: KeyboardEvent) => {
-        if ((options.alt && event.altKey) || (options.shift && event.shiftKey) || (options.ctrl && event.ctrlKey)) {
+        // if not specified, mod keys are undefined - so we default to false to make the comparison easier
+        const { alt = false, shift = false, ctrl = false } = options;
+
+        if (alt === event.altKey && shift === event.shiftKey && ctrl === event.ctrlKey) {
             if (event.key.toLowerCase() === options.key.toLowerCase()) {
                 if (!options.allowDefault) event.preventDefault();
                 if (options.trigger === "click") node.click();
