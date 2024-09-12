@@ -56,7 +56,8 @@
                         bind:value={booking.from}
                         class:overlap={booking.overlapsFrom}
                         autofocus={!booking.from && booking.id === $bookingsStore.at(-1)?.id}
-                        on:blur={() => appController.sortBookingsByTime(booking.id)}
+                        on:blur={() => appController.sortBookingsByTime(booking)}
+                        on:input={() => appController.markOverlappingBookings()}
                     />
                 </td>
                 <td>
@@ -64,12 +65,13 @@
                         type="time"
                         bind:value={booking.to}
                         class:overlap={booking.overlapsTo}
-                        on:blur={() => appController.sortBookingsByTime(booking.id)}
+                        on:blur={() => appController.sortBookingsByTime(booking)}
+                        on:input={() => appController.markOverlappingBookings()}
                     />
                 </td>
                 <td>{@html booking.formatDuration()}</td>
                 <td>
-                    <select bind:value={booking.task} on:blur={() => appController.sortBookingsByTime(booking.id)}>
+                    <select bind:value={booking.task} on:blur={() => appController.sortBookingsByTime(booking)}>
                         {#each $tasksStore as task}
                             <option value={task} selected={task === booking.task}>{task}</option>
                         {/each}

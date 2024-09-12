@@ -36,9 +36,13 @@ export class Booking {
         return this.#to;
     }
 
+    isReady(): boolean {
+        return this.from.isFilled() && this.to.isFilled() && this.task.length > 0;
+    }
+
     // TODO: we should date compare here prob. Currently no support for crossing midnight.
     isBefore(other: Booking): boolean {
-        return this.from.toMinutes() < other.from.toMinutes();
+        return this.from.toMinutes() <= other.from.toMinutes();
     }
 
     // TODO: we should date compare here prob. Currently no support for crossing midnight.
@@ -79,8 +83,6 @@ class BookingTime {
     static fromString(time: string): BookingTime {
         if (!time) return new BookingTime(-1, -1);
 
-        console.log("BookingTime fromString()", time); // TODO remove
-
         const [hours, minutes] = time.split(":").map(Number);
 
         if (hours === undefined || hours < 0 || hours > 23 || minutes === undefined || minutes < 0 || minutes > 59) {
@@ -92,6 +94,10 @@ class BookingTime {
 
     static fromMinutes(minutes: number): BookingTime {
         return new BookingTime(Math.floor(minutes / 60), minutes % 60);
+    }
+
+    isFilled(): boolean {
+        return this.hours > -1 && this.minutes > -1;
     }
 
     minutesBetween(other: BookingTime): number {

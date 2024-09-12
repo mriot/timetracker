@@ -15,6 +15,10 @@ export class AppController {
         this.bookings = bookings;
         this.tasks = tasks;
 
+        this.bookings.subscribe(() => {
+            this.markOverlappingBookings();
+        });
+
         this.totalWorkTimeString = derived(this.bookings, () => {
             return formatWorkTime(this.getTotalWorkTime());
         });
@@ -27,8 +31,6 @@ export class AppController {
 
             return new Map(taskWorkTimeEntries.map(([task, workTime]) => [task, formatWorkTime(workTime)]));
         });
-
-        this.sortBookingsByTime();
     }
 
     addBooking(booking: Booking) {
@@ -76,29 +78,64 @@ export class AppController {
         });
     }
 
-    sortBookingsByTime(triggeringBookingId?: number) {
-        const booking = get(this.bookings).find((booking) => booking.id === triggeringBookingId);
-
-        this.markOverlappingBookings();
-
-        if (booking && (!booking.from || !booking.to || !booking.task)) {
+    sortBookingsByTime(triggeringBooking?: Booking) {
+        // don't sort if the triggering booking is not fully filled out
+        if (triggeringBooking && !triggeringBooking.isReady()) {
             return;
         }
 
-        this.bookings.update((bookings) => bookings.sort((a, b) => (a.isBefore(b) ? -1 : 1)));
+        this.bookings.update((bookings) =>
+            bookings.sort((bookingA, bookingB) => {
+                if (bookingA && (!bookingA.from || !bookingA.to)) {
+                    return 0;
+                }
+
+                if (bookingB && (!bookingB.from || !bookingB.to)) {
+                    return 0;
+                }
+
+                return bookingA.isBefore(bookingB) ? -1 : 1;
+            })
+        );
+
+        this.markOverlappingBookings();
     }
 
-    private markOverlappingBookings(): void {
+    markOverlappingBookings(): void {
         const bookings = get(this.bookings);
 
-        bookings.forEach((booking, i, arr) => {
-            const nextBooking = arr[i + 1];
-            if (!nextBooking) return;
+        bookings.reduce((prevBooking: Booking | null, booking: Booking, idx: number, arr: Booking[]) => {
+            // NOTE: prevBooking is the current booking - IF there was an overlap previously
 
-            // check if current TO and next FROM intersect
+            // if we had no overlap in the previous iteration, we can reset the flags
+            if (!prevBooking) {
+                booking.overlapsFrom = false;
+                booking.overlapsTo = false;
+            }
+
+            const nextBooking = arr[idx + 1];
+            if (!nextBooking) {
+                // we're currently dealing with the last booking - can't have an overlap here
+                booking.overlapsTo = false;
+                return null;
+            }
+
+            // don't compare with bookings where the time is not set
+            if (!nextBooking.isReady()) {
+                return null;
+            }
+
+            // finally check if <current to> and <next from> overlap
             booking.overlapsTo = booking.hasOverlap(nextBooking);
             nextBooking.overlapsFrom = booking.overlapsTo;
-        });
+
+            // only feed the next booking back in if it has an overlap
+            if (nextBooking.overlapsFrom) {
+                return nextBooking;
+            }
+
+            return null;
+        }, null);
     }
 
     private getTotalWorkTime(): number {
