@@ -11,7 +11,7 @@
     let taskWorkTimeStore: Readable<Map<string, string>>;
     let totalWorkTimeStore: Readable<string>;
     let debugMode: boolean = false;
-    let showTaskManager: boolean = false;
+    let showTaskManager: boolean = true;
 
     const appController = new AppController(bookingsStore, tasksStore);
 
