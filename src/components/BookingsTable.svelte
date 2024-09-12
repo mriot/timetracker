@@ -53,18 +53,18 @@
                 <td>
                     <input
                         type="time"
-                        autofocus={!booking.from && booking.id === $bookingsStore.at(-1)?.id}
                         bind:value={booking.from}
+                        class:overlap={booking.overlapsFrom}
+                        autofocus={!booking.from && booking.id === $bookingsStore.at(-1)?.id}
                         on:blur={() => appController.sortBookingsByTime(booking.id)}
-                        class:overlapping-from={booking.isOverlappingFrom}
                     />
                 </td>
                 <td>
                     <input
                         type="time"
                         bind:value={booking.to}
+                        class:overlap={booking.overlapsTo}
                         on:blur={() => appController.sortBookingsByTime(booking.id)}
-                        class:overlapping-to={booking.isOverlappingTo}
                     />
                 </td>
                 <td>{@html booking.formatDuration()}</td>
@@ -133,8 +133,7 @@
             text-align: center;
         }
 
-        .overlapping-from,
-        .overlapping-to {
+        .overlap {
             outline: 1px dashed red;
             background-image: var(--pico-icon-invalid) !important;
         }

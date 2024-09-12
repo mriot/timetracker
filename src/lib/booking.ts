@@ -4,8 +4,9 @@ export class Booking {
     id: number;
     duration: number | undefined;
     task: string;
-    isOverlappingFrom: boolean = false;
-    isOverlappingTo: boolean = false;
+    overlapsFrom: boolean = false;
+    overlapsTo: boolean = false;
+    hasGapBefore: boolean = false;
     #from!: BookingTime;
     #to!: BookingTime;
 
@@ -35,20 +36,14 @@ export class Booking {
         return this.#to;
     }
 
+    // TODO: we should date compare here prob. Currently no support for crossing midnight.
     isBefore(other: Booking): boolean {
-        return this.#to.toMinutes() <= other.#from.toMinutes();
+        return this.from.toMinutes() < other.from.toMinutes();
     }
 
-    isOverlapping(other: Booking): boolean {
-        return this.#from.toMinutes() < other.#to.toMinutes() && this.#to.toMinutes() > other.#from.toMinutes();
-    }
-
-    hasOverlapFrom(other: Booking): boolean {
-        return this.#from.toMinutes() < other.#from.toMinutes() && this.#to.toMinutes() > other.#from.toMinutes();
-    }
-
-    hasOverlapTo(other: Booking): boolean {
-        return this.#from.toMinutes() < other.#to.toMinutes() && this.#to.toMinutes() > other.#to.toMinutes();
+    // TODO: we should date compare here prob. Currently no support for crossing midnight.
+    hasOverlap(other: Booking): boolean {
+        return this.to.toMinutes() > other.from.toMinutes();
     }
 
     calculateDuration(): number {

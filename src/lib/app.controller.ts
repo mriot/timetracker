@@ -28,7 +28,7 @@ export class AppController {
             return new Map(taskWorkTimeEntries.map(([task, workTime]) => [task, formatWorkTime(workTime)]));
         });
 
-        this.markOverlappingBookings();
+        this.sortBookingsByTime();
     }
 
     addBooking(booking: Booking) {
@@ -81,25 +81,23 @@ export class AppController {
 
         this.markOverlappingBookings();
 
-        if (
-            booking &&
-            (!booking.from || !booking.to || !booking.task || booking.isOverlappingTo || booking.isOverlappingFrom)
-        ) {
+        if (booking && (!booking.from || !booking.to || !booking.task)) {
             return;
         }
 
         this.bookings.update((bookings) => bookings.sort((a, b) => (a.isBefore(b) ? -1 : 1)));
     }
 
-    // TODO make a visual connection bookings?
-    markOverlappingBookings(): void {
+    private markOverlappingBookings(): void {
         const bookings = get(this.bookings);
 
         bookings.forEach((booking, i, arr) => {
             const nextBooking = arr[i + 1];
             if (!nextBooking) return;
 
-            // TODO implement
+            // check if current TO and next FROM intersect
+            booking.overlapsTo = booking.hasOverlap(nextBooking);
+            nextBooking.overlapsFrom = booking.overlapsTo;
         });
     }
 
