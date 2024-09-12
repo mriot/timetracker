@@ -7,7 +7,7 @@
     <ul>
         <li>
             <div class="title">
-                <img src="/icon.svg" on:dblclick={() => (debugMode = !debugMode)} />
+                <img src="icon.svg" on:dblclick={() => (debugMode = !debugMode)} />
                 <strong>TimeTracker</strong>
             </div>
         </li>
