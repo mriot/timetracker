@@ -1,9 +1,11 @@
 <script lang="ts">
     import { type Readable } from "svelte/store";
-    import { fade } from "svelte/transition";
+    import { crossfade, fade } from "svelte/transition";
     import { Booking } from "./booking";
     import { BookingTable } from "./booking-table";
     import { bookingsStore, tasksStore } from "./store";
+    import { quintOut } from "svelte/easing";
+    import { flip } from "svelte/animate";
 
     let taskWorkTimeStore: Readable<Map<string, string>>;
     let totalWorkTimeStore: Readable<string>;
@@ -15,6 +17,22 @@
     $: totalWorkTimeStore = bookingTable.totalWorkTimeString;
 
     $: taskWorkTimeStore = bookingTable.taskWorkTimeMap;
+
+    const [send, receive] = crossfade({
+        fallback(node, params) {
+            const style = getComputedStyle(node);
+            const transform = style.transform === "none" ? "" : style.transform;
+
+            return {
+                duration: 600,
+                easing: quintOut,
+                css: (t, u) => `
+                    transform: ${transform} scale(${t});
+                    opacity: ${t}
+                `,
+            };
+        },
+    });
 </script>
 
 <header>
@@ -27,14 +45,15 @@
         <ul>
             <li>
                 <details class="dropdown">
-                    <summary>☰</summary>
+                    <summary>☰ Options</summary>
                     <ul>
                         <li>
                             <a
                                 href="#"
                                 on:click={() => {
-                                    const newtask = prompt();
-                                    newtask && tasksStore.update((tasks) => [...tasks, newtask]);
+                                    modalOpen = true;
+                                    //const newtask = prompt();
+                                    //newtask && tasksStore.update((tasks) => [...tasks, newtask]);
                                 }}
                             >
                                 Add task
@@ -113,7 +132,7 @@
         </thead>
         <tbody>
             {#each $bookingsStore as booking (booking.id)}
-                <tr transition:fade>
+                <tr in:receive={{ key: booking.id }} out:send={{ key: booking.id }} animate:flip>
                     <td>
                         <input type="time" bind:value={booking.from} />
                     </td>
