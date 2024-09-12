@@ -7,7 +7,7 @@ type KeybindOptions = {
     key: string;
     allowDefault?: boolean;
     trigger?: "click" | "focus";
-    callback?: () => void;
+    callback?: (event: Event) => void;
 };
 
 /**
@@ -28,7 +28,7 @@ export const keybind: Action<HTMLElement, KeybindOptions> = (node: HTMLElement, 
                 if (!options.allowDefault) event.preventDefault();
                 if (options.trigger === "click") node.click();
                 if (options.trigger === "focus") node.focus();
-                options.callback?.();
+                options.callback?.(event);
             }
         }
     };
