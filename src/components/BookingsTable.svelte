@@ -3,6 +3,7 @@
     import { quintOut } from "svelte/easing";
     import type { Readable } from "svelte/store";
     import { crossfade } from "svelte/transition";
+    import { keybind } from "../lib/actions/keybind";
     import type { AppController } from "../lib/app.controller";
     import { Booking } from "../lib/booking";
     import { bookingsStore, tasksStore } from "../stores/store";
@@ -96,7 +97,12 @@
         </tr>
     </tbody>
 </table>
-<button on:click={() => appController.addBooking(new Booking("00:00", "00:00"))}> Add booking </button>
+<button
+    on:click={() => appController.addBooking(new Booking("", ""))}
+    use:keybind={{ ctrl: true, key: "a", trigger: "click" }}
+>
+    Add booking
+</button>
 
 <style lang="scss">
     table.bookings {
