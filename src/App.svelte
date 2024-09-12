@@ -60,29 +60,27 @@
     </hgroup>
 </header>
 
-<section>
-    <nav>
-        <form role="group" on:submit|preventDefault={addTask}>
-            <input
-                type="text"
-                name="text"
-                placeholder="Task Name"
-                aria-label="Text"
-                tabindex="0"
-                bind:value={taskNameInput}
-            />
-            <input type="submit" value="Add" />
-            <input
-                type="reset"
-                value="Clear"
-                class="delete-all-tasks-btn"
-                on:click={() => {
-                    if (confirm("Remove all tasks?")) tasks = [];
-                }}
-            />
-        </form>
-    </nav>
-</section>
+<nav>
+    <form role="group" on:submit|preventDefault={addTask}>
+        <input
+            type="text"
+            name="text"
+            placeholder="Task Name"
+            aria-label="Text"
+            tabindex="0"
+            bind:value={taskNameInput}
+        />
+        <input type="submit" value="Add" />
+        <input
+            type="reset"
+            value="Clear"
+            class="delete-all-tasks-btn"
+            on:click={() => {
+                if (confirm("Remove all tasks?")) tasks = [];
+            }}
+        />
+    </form>
+</nav>
 
 <section class="grid">
     {#each tasks as task (task.id)}
