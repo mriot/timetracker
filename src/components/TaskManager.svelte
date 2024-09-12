@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { BookingTable } from "./booking-table";
-    import { tasksStore } from "./store";
+    import { BookingTable } from "../lib/booking-table";
+    import { tasksStore } from "../stores/store";
 
     export let bookingTable: BookingTable;
 

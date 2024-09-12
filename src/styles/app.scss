@@ -1,0 +1,14 @@
+@use "@picocss/pico/scss/pico" with (
+    $theme-color: "azure", // amber, azure, blue, cyan, fuchsia, green, grey, indigo, jade, lime, orange, pink, pumpkin, purple, red, sand, slate, violet, yellow, zinc
+);
+
+:root {
+    --pico-line-height: 1.25;
+    --pico-spacing: 0.75rem;
+    --pico-font-size: 1rem;
+}
+
+html,
+body {
+    margin: 0.5rem 0;
+}

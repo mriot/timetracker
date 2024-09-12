@@ -3,10 +3,10 @@
     import { quintOut } from "svelte/easing";
     import { type Readable } from "svelte/store";
     import { crossfade, slide } from "svelte/transition";
-    import { Booking } from "./booking";
-    import { BookingTable } from "./booking-table";
-    import { bookingsStore, tasksStore } from "./store";
-    import TaskManager from "./TaskManager.svelte";
+    import TaskManager from "./components/TaskManager.svelte";
+    import { Booking } from "./lib/booking";
+    import { BookingTable } from "./lib/booking-table";
+    import { bookingsStore, tasksStore } from "./stores/store";
 
     let taskWorkTimeStore: Readable<Map<string, string>>;
     let totalWorkTimeStore: Readable<string>;

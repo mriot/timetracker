@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { Booking } from "./booking";
+import { Booking } from "../lib/booking";
 
 // TODO mapFn type and make it optional
 function localStorageStore<T>(key: string, initialValue: T, mapFn: any) {
