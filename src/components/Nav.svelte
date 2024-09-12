@@ -31,6 +31,17 @@
             </a>
         </li>
         <li>
+            <!-- TODO maybe show only the task booking list -->
+            <a
+                href=""
+                on:click|preventDefault={() => {
+                    window.open(window.location.href, "_blank", "width=1000,height=500");
+                }}
+            >
+                Popout
+            </a>
+        </li>
+        <li>
             <a
                 href=""
                 on:click|preventDefault={() => {
