@@ -2,25 +2,20 @@
     import { onMount } from "svelte";
     import { fade, slide } from "svelte/transition";
     import { TableRow } from "./table-row";
-
-    let tasks = ["Daily", "Zeiterfassung", "Team-Kommunikation", "Arbeitsplatz"];
-
-    let tableRows: TableRow[] = [
-        new TableRow("10:00", "11:00", "Zeiterfassung"),
-        new TableRow("", "", ""),
-        new TableRow("", "", ""),
-        new TableRow("", "", ""),
-    ];
+    import { tableRowStore } from "./store";
+    import { tasks } from "./tasks";
 
     let hasMounted: boolean = false;
     let totalWorkMinutes: number = 0;
 
     onMount(() => {
-        // hasMounted = true;
-        // tasks = JSON.parse(localStorage.getItem("tasks") ?? "[]").map(
-        //     (task: any) => new Task(task.id, task.name, task.times)
-        // );
+        tableRowStore.set($tableRowStore.map((row) => new TableRow(row.from, row.to, row.task)));
+        hasMounted = true;
     });
+
+    $: if (hasMounted) {
+        console.table($tableRowStore);
+    }
 </script>
 
 <header>
@@ -47,6 +42,28 @@
     <table>
         <thead>
             <tr>
+                {#each tasks as task}
+                    <th>{task}</th>
+                {/each}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1h</td>
+                <td>2h</td>
+                <td>3h</td>
+                <td>4h</td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <thead>
+            <tr>
+                <td colspan="2" class="total-work-time">
+                    ┌─── <span> 07h 15m (7.25h) </span> ───┐
+                </td>
+            </tr>
+            <tr>
                 <th>From</th>
                 <th>To</th>
                 <th>Duration</th>
@@ -56,7 +73,7 @@
             </tr>
         </thead>
         <tbody>
-            {#each tableRows as row (row.id)}
+            {#each $tableRowStore as row (row.id)}
                 <tr transition:fade>
                     <td>
                         <input type="time" bind:value={row.from} />
@@ -64,9 +81,9 @@
                     <td>
                         <input type="time" bind:value={row.to} />
                     </td>
-                    <td>{row.formatDuration()}</td>
+                    <td>{row}</td>
                     <td>
-                        <select>
+                        <select bind:value={row.task}>
                             {#each tasks as task}
                                 <option value={task} selected={task === row.task}>{task}</option>
                             {/each}
@@ -93,7 +110,10 @@
     </table>
     <button
         on:click={() => {
-            tableRows = [...tableRows, new TableRow("", "")];
+            tableRowStore.update((rows) => {
+                rows.push(new TableRow("", "", ""));
+                return rows;
+            });
         }}
     >
         Add Row

@@ -1,3 +1,5 @@
+import { tableRowStore } from "./store";
+
 export class TableRow {
     id: number;
     duration: number | undefined;
@@ -6,16 +8,16 @@ export class TableRow {
     private _to: string;
 
     constructor(from: string, to: string, task?: string) {
-        this.id = Math.floor(Math.random() * 999); // TODO find a better solution
+        this.id = Math.floor(Math.random() * 999); // TODO
         this._from = from;
         this._to = to;
         this.task = task;
-        this.duration = this.calculateDuration();
+        this.duration = this.calculateElapsedMinutes();
     }
 
     set from(value: string) {
         this._from = value;
-        this.duration = this.calculateDuration();
+        this.duration = this.calculateElapsedMinutes();
     }
 
     get from(): string {
@@ -24,14 +26,14 @@ export class TableRow {
 
     set to(value: string) {
         this._to = value;
-        this.duration = this.calculateDuration();
+        this.duration = this.calculateElapsedMinutes();
     }
 
     get to(): string {
         return this._to;
     }
 
-    calculateDuration(): number | undefined {
+    calculateElapsedMinutes(): number | undefined {
         if (!this._from || !this._to) return undefined;
 
         const [startHours, startMinutes] = this.from.split(":").map(Number);
@@ -53,6 +55,6 @@ export class TableRow {
     }
 
     remove() {
-        // tableRows = tableRows.filter((r) => r.id !== this.id);
+        tableRowStore.update((rows) => rows.filter((row) => row.id !== this.id));
     }
 }
