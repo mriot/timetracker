@@ -10,7 +10,7 @@
 
 <div class="grid">
     <div>
-        <select size="5" bind:value={selectedTask}>
+        <select size={Math.min(15, Math.max($tasksStore.length, 5))} bind:value={selectedTask}>
             {#each $tasksStore as task}
                 <option>{task}</option>
             {/each}
