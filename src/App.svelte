@@ -95,7 +95,7 @@
 
             <ul>
                 {#each task.times as time}
-                    <li in:slide out:fade>
+                    <li in:slide out:slide>
                         <div class="time-row">
                             <span>
                                 {time.start} - {time.end}
@@ -105,6 +105,7 @@
                                 on:click={() => {
                                     if (confirm("Remove this time?")) {
                                         task.removeTime(time.id);
+                                        tasks = tasks; // trigger reactivity
                                     }
                                 }}
                             >
