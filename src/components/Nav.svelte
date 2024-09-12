@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { BookingTable } from "../lib/booking-table";
+
+    export let bookingTable: BookingTable;
     export let showTaskManager = false;
     export let debugMode = false;
 </script>
@@ -12,7 +15,7 @@
             </div>
         </li>
     </ul>
-    <ul>
+    <ul class="nav-items">
         {#if debugMode}
             <li>
                 <small>debug mode</small>
@@ -31,27 +34,23 @@
             <a
                 href=""
                 on:click|preventDefault={() => {
-                    if (confirm("Remove all bookings?")) {
-                        localStorage.removeItem("bookings");
-                        location.reload();
-                    }
+                    if (confirm("Remove all bookings?")) bookingTable.clearBookings();
                 }}
             >
-                Reset bookings
+                Clear bookings
             </a>
         </li>
         <li>
             <a
                 href=""
                 on:click|preventDefault={() => {
-                    if (confirm("Reset tasks to default?")) {
-                        localStorage.removeItem("tasks");
-                        location.reload();
-                    }
-                }}
+                    alert(
+                        "Free TimeTracker app that collects absolutely no data about you." +
+                            "\nEverything is stored in your browser's local storage." +
+                            "\n\nMade with Svelte."
+                    );
+                }}>About</a
             >
-                Reset tasks
-            </a>
         </li>
     </ul>
 </nav>
@@ -64,6 +63,15 @@
 
         img {
             max-width: 3rem;
+            margin-right: 1rem;
+        }
+    }
+
+    .nav-items li:not(:first-child) {
+        &::before {
+            content: "|";
+            color: #7b8495;
+            margin-left: 0;
             margin-right: 1rem;
         }
     }

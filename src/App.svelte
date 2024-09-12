@@ -22,7 +22,7 @@
 </script>
 
 <header>
-    <Nav bind:showTaskManager bind:debugMode />
+    <Nav bind:showTaskManager bind:debugMode {bookingTable} />
 </header>
 
 <hr />
