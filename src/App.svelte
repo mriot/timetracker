@@ -4,20 +4,17 @@
     import { bookingsStore, tasksStore } from "./store";
 
     let taskWorkTimeMap = new Map<string, number>();
-    let taskCountMap = new Map<string, number>();
     let totalWorkTime: string;
     let debugMode: boolean = false;
 
     $: {
         taskWorkTimeMap.clear();
-        taskCountMap.clear();
 
         const totalWorkMinutes = $bookingsStore.reduce((total, booking) => {
             taskWorkTimeMap.set(
                 booking.task,
                 (taskWorkTimeMap.get(booking.task) || 0) + booking.calculateElapsedMinutes()
             );
-            taskCountMap.set(booking.task, (taskCountMap.get(booking.task) || 0) + 1);
             return total + booking.calculateElapsedMinutes();
         }, 0);
 
@@ -41,6 +38,11 @@
                         const newtask = prompt();
                         newtask && tasksStore.update((tasks) => [...tasks, newtask]);
                     }}>Add task</a
+                >
+            </li>
+            <li>
+                <a href="#" on:click={() => confirm("Clear bookings?") && localStorage.removeItem("bookings")}
+                    >Clear bookings</a
                 >
             </li>
             <li>
