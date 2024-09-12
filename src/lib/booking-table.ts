@@ -59,7 +59,7 @@ export class BookingTable {
         const taskWorkTimeMap = new Map<string, number>();
 
         get(this.bookings).forEach((booking) => {
-            const task = get(this.tasks).includes(booking.task) ? booking.task : "Unknown";
+            const task = get(this.tasks).includes(booking.task) ? booking.task : "Not assigned";
             const workTime = booking.getWorkMinutes();
             taskWorkTimeMap.set(task, (taskWorkTimeMap.get(task) ?? 0) + workTime);
         });

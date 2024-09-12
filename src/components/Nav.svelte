@@ -6,7 +6,10 @@
 <nav>
     <ul>
         <li>
-            <strong>TimeTracker</strong>
+            <div class="title">
+                <img src="/icon.svg" />
+                <strong>TimeTracker</strong>
+            </div>
         </li>
     </ul>
     <ul>
@@ -43,7 +46,14 @@
 </nav>
 
 <style lang="scss">
-    nav strong {
+    .title {
+        display: flex;
+        align-items: center;
         font-size: 1.5rem;
+
+        img {
+            max-width: 3rem;
+            margin-right: 1rem;
+        }
     }
 </style>

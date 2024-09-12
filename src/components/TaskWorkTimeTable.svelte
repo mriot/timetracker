@@ -43,13 +43,18 @@
     </tbody>
 </table>
 
+<hr />
+
 <style lang="scss">
     table.work-times {
-        margin-bottom: 2rem;
-
         th,
         td {
             text-align: center;
+            border: none;
+
+            &:not(:last-child) {
+                border-right: 1px solid var(--pico-muted-border-color);
+            }
         }
     }
 </style>
