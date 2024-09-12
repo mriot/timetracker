@@ -3,13 +3,18 @@
     import { Booking } from "./booking";
     import { bookingsStore, tasksStore } from "./store";
 
+    let taskMap = new Map<string, number>();
     let totalWorkTime: string;
 
     $: {
-        const totalWorkMinutes = $bookingsStore.reduce(
-            (total, booking) => total + booking.calculateElapsedMinutes(),
-            0
-        );
+        taskMap.clear();
+
+        const totalWorkMinutes = $bookingsStore.reduce((total, booking) => {
+            taskMap.set(booking.task, (taskMap.get(booking.task) || 0) + booking.calculateElapsedMinutes());
+            return total + booking.calculateElapsedMinutes();
+        }, 0);
+
+        taskMap = taskMap;
         totalWorkTime = `${Math.floor(totalWorkMinutes / 60)}h ${totalWorkMinutes % 60}m (${(totalWorkMinutes / 60).toFixed(2)}h)`;
     }
 </script>
@@ -44,17 +49,16 @@
     <table>
         <thead>
             <tr>
-                {#each $tasksStore as task}
-                    <th>{task}</th>
+                {#each taskMap.entries() as [key, value]}
+                    <th>{key}</th>
                 {/each}
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>1h</td>
-                <td>2h</td>
-                <td>3h</td>
-                <td>4h</td>
+                {#each taskMap.entries() as [key, value]}
+                    <td>{`${Math.floor(value / 60)}h ${value % 60}m (${(value / 60).toFixed(2)}h)`}</td>
+                {/each}
             </tr>
         </tbody>
     </table>

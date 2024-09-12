@@ -1,7 +1,7 @@
 export class Booking {
     id: number;
     duration: number | undefined;
-    task: string | undefined;
+    task: string;
     private _from: string;
     private _to: string;
 
@@ -9,7 +9,7 @@ export class Booking {
         this.id = Math.floor(Math.random() * 999); // TODO
         this._from = from;
         this._to = to;
-        this.task = task;
+        this.task = task ?? "";
         this.duration = this.calculateElapsedMinutes();
     }
 
