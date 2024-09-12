@@ -1,13 +1,15 @@
 <script lang="ts">
     import { flip } from "svelte/animate";
     import { quintOut } from "svelte/easing";
+    import type { Readable } from "svelte/store";
     import { crossfade } from "svelte/transition";
+    import type { AppController } from "../lib/app.controller";
     import { Booking } from "../lib/booking";
     import { bookingsStore, tasksStore } from "../stores/store";
 
-    export let bookingTable;
-    export let totalWorkTimeStore;
-    export let debugMode;
+    export let appController: AppController;
+    export let totalWorkTimeStore: Readable<string>;
+    export let debugMode: boolean;
 
     const [send, receive] = crossfade({
         fallback(node, params) {
@@ -48,14 +50,22 @@
         {#each $bookingsStore as booking (booking.id)}
             <tr in:receive={{ key: booking.id }} out:send={{ key: booking.id }} animate:flip>
                 <td>
-                    <input type="time" bind:value={booking.from} />
+                    <input
+                        type="time"
+                        bind:value={booking.from}
+                        on:blur={() => appController.sortBookingsByTime(booking.id)}
+                    />
                 </td>
                 <td>
-                    <input type="time" bind:value={booking.to} on:blur={() => bookingTable.sortBookingsByTime()} />
+                    <input
+                        type="time"
+                        bind:value={booking.to}
+                        on:blur={() => appController.sortBookingsByTime(booking.id)}
+                    />
                 </td>
                 <td>{booking.formatDuration()}</td>
                 <td>
-                    <select bind:value={booking.task}>
+                    <select bind:value={booking.task} on:change={() => appController.sortBookingsByTime(booking.id)}>
                         {#each $tasksStore as task}
                             <option value={task} selected={task === booking.task}>{task}</option>
                         {/each}
@@ -66,7 +76,7 @@
                         style="cursor: pointer;"
                         on:click={() => {
                             if (confirm("Remove this row?")) {
-                                bookingTable.removeBooking(booking.id);
+                                appController.removeBooking(booking.id);
                             }
                         }}
                     >
@@ -85,7 +95,7 @@
         </tr>
     </tbody>
 </table>
-<button on:click={() => bookingTable.addBooking(new Booking("00:00", "00:00"))}> Add booking </button>
+<button on:click={() => appController.addBooking(new Booking("00:00", "00:00"))}> Add booking </button>
 
 <style lang="scss">
     table.bookings {

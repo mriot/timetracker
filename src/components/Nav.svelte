@@ -1,7 +1,7 @@
 <script lang="ts">
     import { AppController } from "../lib/app.controller";
 
-    export let bookingTable: AppController;
+    export let appController: AppController;
     export let showTaskManager = false;
     export let debugMode = false;
 </script>
@@ -34,7 +34,7 @@
             <a
                 href=""
                 on:click|preventDefault={() => {
-                    if (confirm("Remove all bookings?")) bookingTable.clearBookings();
+                    if (confirm("Remove all bookings?")) appController.clearBookings();
                 }}
             >
                 Clear bookings

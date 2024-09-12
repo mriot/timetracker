@@ -2,7 +2,7 @@
     import { AppController } from "../lib/app.controller";
     import { tasksStore } from "../stores/store";
 
-    export let taskBookingController: AppController;
+    export let appController: AppController;
 
     let input = "";
     let selected = "";
@@ -24,7 +24,7 @@
                 <button
                     disabled={input.length < 1}
                     on:click={() => {
-                        taskBookingController.addTask(input);
+                        appController.addTask(input);
                         input = "";
                         selected = "";
                     }}
@@ -36,18 +36,14 @@
 
         <div class="controls">
             <fieldset>
-                <button disabled={!selected} on:click={() => taskBookingController.moveTask(selected, "up")}>
-                    ↑
-                </button>
-                <button disabled={!selected} on:click={() => taskBookingController.moveTask(selected, "down")}>
-                    ↓
-                </button>
+                <button disabled={!selected} on:click={() => appController.moveTask(selected, "up")}> ↑ </button>
+                <button disabled={!selected} on:click={() => appController.moveTask(selected, "down")}> ↓ </button>
                 &nbsp;
                 <button
                     disabled={!selected}
                     class="secondary"
                     on:click={() => {
-                        confirm(`Delete task ${selected}?`) && taskBookingController.removeTask(selected);
+                        confirm(`Delete task ${selected}?`) && appController.removeTask(selected);
                         selected = "";
                     }}
                 >
@@ -59,7 +55,7 @@
                     class="secondary"
                     on:click={() => {
                         if (confirm("Reset tasks to default?\nThis will delete all custom tasks!")) {
-                            taskBookingController.resetTasks();
+                            appController.resetTasks();
                             selected = "";
                         }
                     }}

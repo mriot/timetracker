@@ -11,30 +11,29 @@
     let taskWorkTimeStore: Readable<Map<string, string>>;
     let totalWorkTimeStore: Readable<string>;
     let debugMode: boolean = false;
-    let modalOpen: boolean = false;
     let showTaskManager: boolean = false;
 
-    const bookingTable = new AppController(bookingsStore, tasksStore);
+    const appController = new AppController(bookingsStore, tasksStore);
 
-    $: totalWorkTimeStore = bookingTable.totalWorkTimeString;
+    $: totalWorkTimeStore = appController.totalWorkTimeString;
 
-    $: taskWorkTimeStore = bookingTable.taskWorkTimeMap;
+    $: taskWorkTimeStore = appController.taskWorkTimeMap;
 </script>
 
 <header>
-    <Nav bind:showTaskManager bind:debugMode {bookingTable} />
+    <Nav bind:showTaskManager bind:debugMode {appController} />
 </header>
 
 <hr />
 
 {#if showTaskManager}
     <div transition:slide>
-        <TaskManager taskBookingController={bookingTable}></TaskManager>
+        <TaskManager {appController}></TaskManager>
         <hr />
     </div>
 {/if}
 
 <main>
     <TaskWorkTimeTable {taskWorkTimeStore} />
-    <BookingsTable {bookingTable} {totalWorkTimeStore} {debugMode} />
+    <BookingsTable {appController} {totalWorkTimeStore} {debugMode} />
 </main>

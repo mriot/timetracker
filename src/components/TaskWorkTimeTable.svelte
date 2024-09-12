@@ -1,8 +1,9 @@
 <script lang="ts">
     import { quintOut } from "svelte/easing";
+    import type { Readable } from "svelte/store";
     import { crossfade } from "svelte/transition";
 
-    export let taskWorkTimeStore;
+    export let taskWorkTimeStore: Readable<Map<string, string>>;
 
     // TODO add crossfade transition
     const [send, receive] = crossfade({
