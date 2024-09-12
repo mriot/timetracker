@@ -59,51 +59,51 @@
         <h1>TimeTracker</h1>
         <span>{convertMinutesToTimeString(totalWorkMinutes)}</span>
     </hgroup>
-
-    <div class="nav">
-        <details class="dropdown">
-            <summary>☰</summary>
-            <ul>
-                <li>
-                    <label>
-                        <input type="checkbox" bind:checked={taskNameEditMode} />
-                        Edit task names
-                    </label>
-                </li>
-                <li>
-                    <input
-                        type="reset"
-                        on:click={() => {
-                            if (confirm("Remove all tasks?")) tasks = [];
-                        }}
-                        value="Delete all tasks"
-                    />
-                </li>
-                <li>
-                    <input
-                        type="button"
-                        value="About"
-                        on:click={() => {
-                            alert("All data is stored locally in your browser, with nothing sent to any server.");
-                        }}
-                    />
-                </li>
-            </ul>
-        </details>
-
-        <form role="group" on:submit|preventDefault={addTask}>
-            <input
-                type="text"
-                name="text"
-                placeholder="Task name"
-                aria-label="Text"
-                tabindex="0"
-                bind:value={taskNameInput}
-            />
-            <input type="submit" value="Add" />
-        </form>
-    </div>
 </header>
+
+<div class="nav">
+    <details class="dropdown">
+        <summary>☰</summary>
+        <ul>
+            <li>
+                <label>
+                    <input type="checkbox" bind:checked={taskNameEditMode} />
+                    Edit task names
+                </label>
+            </li>
+            <li>
+                <input
+                    type="reset"
+                    on:click={() => {
+                        if (confirm("Remove all tasks?")) tasks = [];
+                    }}
+                    value="Delete all tasks"
+                />
+            </li>
+            <li>
+                <input
+                    type="button"
+                    value="About"
+                    on:click={() => {
+                        alert("All data is stored locally in your browser, with nothing sent to any server.");
+                    }}
+                />
+            </li>
+        </ul>
+    </details>
+
+    <form role="group" on:submit|preventDefault={addTask}>
+        <input
+            type="text"
+            name="text"
+            placeholder="Task name"
+            aria-label="Text"
+            tabindex="0"
+            bind:value={taskNameInput}
+        />
+        <input type="submit" value="Add" />
+    </form>
+</div>
 
 <section class="grid">
     {#each tasks as task (task.id)}
@@ -162,8 +162,16 @@
 
     /* workaround: the nav element had trouble to display everything on one line */
     .nav {
+        position: sticky;
         display: flex;
+        top: 0.5rem;
         gap: 0.5rem;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .nav > * {
+        box-shadow: 0 0rem 0.5rem rgba(0, 0, 0, 0.5);
     }
 
     .nav summary {
@@ -182,13 +190,12 @@
 
     .grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
         gap: 1rem;
     }
 
     .task {
         position: relative;
-        min-width: auto;
     }
 
     .task-work-time {
@@ -209,11 +216,5 @@
 
     .delete-time-btn {
         cursor: pointer;
-    }
-
-    @media (max-width: 1024px) {
-        .task {
-            grid-column: span 3;
-        }
     }
 </style>
