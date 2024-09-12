@@ -27,6 +27,8 @@ export class AppController {
 
             return new Map(taskWorkTimeEntries.map(([task, workTime]) => [task, formatWorkTime(workTime)]));
         });
+
+        this.markOverlappingBookings();
     }
 
     addBooking(booking: Booking) {
