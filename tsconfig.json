@@ -12,5 +12,5 @@
         "strictPropertyInitialization": true,
         "lib": ["es2022", "dom", "dom.iterable"]
     },
-    "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"]
+    "include": ["src/**/*.ts", "src/**/*.svelte"]
 }
