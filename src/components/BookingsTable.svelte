@@ -53,13 +53,13 @@
                 in:receive={{ key: booking.id }}
                 out:send={{ key: booking.id }}
                 animate:flip={{ duration: 250 }}
-                class:hasTimeGap={booking.hasTimeGap}
+                class:has-time-gap={booking.hasTimeGap}
             >
                 <td>
                     <input
                         type="time"
                         bind:value={booking.from}
-                        class:overlap={booking.overlapsFrom}
+                        class:has-time-overlap={booking.overlapsFrom}
                         autofocus={!booking.from.isFilled() && booking.id === $bookingsStore.at(-1)?.id}
                         on:blur={() => appController.sortBookingsByTime(booking)}
                         on:input={() => appController.flagOverlappingTimes()}
@@ -69,7 +69,7 @@
                     <input
                         type="time"
                         bind:value={booking.to}
-                        class:overlap={booking.overlapsTo}
+                        class:has-time-overlap={booking.overlapsTo}
                         on:blur={() => appController.sortBookingsByTime(booking)}
                         on:input={() => appController.flagOverlappingTimes()}
                     />
@@ -140,7 +140,7 @@
             text-align: center;
         }
 
-        tr.hasTimeGap {
+        tr.has-time-gap {
             td {
                 border-bottom: 0.4rem solid var(--pico-table-border-color);
                 padding-bottom: 0.6rem;
@@ -152,7 +152,7 @@
             }
         }
 
-        .overlap {
+        .has-time-overlap {
             outline: 1px dashed red;
             background-image: var(--pico-icon-invalid) !important;
         }
