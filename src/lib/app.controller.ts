@@ -64,12 +64,18 @@ export class AppController {
                 newIndex = index === tasks.length - 1 ? 0 : index + 1;
             }
 
-            [tasks[index], tasks[newIndex]] = [tasks[newIndex], tasks[index]];
+            [tasks[index], tasks[newIndex]] = [tasks[newIndex] as string, tasks[index] as string];
+
             return tasks;
         });
     }
 
-    sortBookingsByTime() {
+    sortBookingsByTime(triggeringBookingId?: number) {
+        const booking = get(this.bookings).find((booking) => booking.id === triggeringBookingId);
+        if (booking && (!booking.from || !booking.to || !booking.task)) {
+            return;
+        }
+
         this.bookings.update((bookings) => bookings.sort((a, b) => a.from.localeCompare(b.from)));
     }
 
