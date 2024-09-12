@@ -1,6 +1,7 @@
-import { derived, writable, type Writable } from "svelte/store";
+import { writable } from "svelte/store";
 import { Booking } from "./booking";
 
+// TODO mapFn type and make it optional
 function localStorageStore<T>(key: string, initialValue: T, mapFn: any) {
     let initialized = false;
     const storedValue = localStorage.getItem(key) ?? JSON.stringify(initialValue);

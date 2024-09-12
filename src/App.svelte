@@ -1,10 +1,9 @@
 <script lang="ts">
+    import { type Readable } from "svelte/store";
     import { fade } from "svelte/transition";
     import { Booking } from "./booking";
-    import { bookingsStore, tasksStore } from "./store";
-    import Modal from "./components/Modal.svelte";
     import { BookingTable } from "./booking-table";
-    import { derived, get, type Readable, writable } from "svelte/store";
+    import { bookingsStore, tasksStore } from "./store";
 
     let taskWorkTimeStore: Readable<Map<string, string>>;
     let totalWorkTimeStore: Readable<string>;
@@ -27,21 +26,41 @@
         </ul>
         <ul>
             <li>
-                <a
-                    href="#"
-                    on:click={() => {
-                        const newtask = prompt();
-                        newtask && tasksStore.update((tasks) => [...tasks, newtask]);
-                    }}>Add task</a
-                >
-            </li>
-            <li>
-                <a href="#" on:click={() => confirm("Clear bookings?") && localStorage.removeItem("bookings")}
-                    >Clear bookings</a
-                >
-            </li>
-            <li>
-                <a href="#" on:click={() => (debugMode = !debugMode)}>Debug</a>
+                <details class="dropdown">
+                    <summary>☰</summary>
+                    <ul>
+                        <li>
+                            <a
+                                href="#"
+                                on:click={() => {
+                                    const newtask = prompt();
+                                    newtask && tasksStore.update((tasks) => [...tasks, newtask]);
+                                }}
+                            >
+                                Add task
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="#"
+                                on:click={() => confirm("Clear bookings?") && localStorage.removeItem("bookings")}
+                            >
+                                Clear bookings
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" on:click={() => confirm("Clear tasks?") && localStorage.removeItem("tasks")}>
+                                Clear tasks
+                            </a>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="checkbox" bind:checked={debugMode} />
+                                Debug
+                            </label>
+                        </li>
+                    </ul>
+                </details>
             </li>
         </ul>
     </nav>

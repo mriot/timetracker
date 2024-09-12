@@ -1,6 +1,6 @@
-import { type Writable, get, derived, writable } from "svelte/store";
-import type { Booking } from "./booking";
 import type { Readable } from "svelte/motion";
+import { type Writable, derived, get } from "svelte/store";
+import type { Booking } from "./booking";
 
 export class BookingTable {
     bookings: Writable<Booking[]>;
@@ -18,6 +18,7 @@ export class BookingTable {
         });
 
         this.taskWorkTimeMap = derived(this.bookings, () => {
+            // sort by total work time in descending order
             const taskWorkTimeEntries = Array.from(this.getTotalWorkTimeByTask().entries()).sort(
                 ([, valueA], [, valueB]) => valueB - valueA
             );
