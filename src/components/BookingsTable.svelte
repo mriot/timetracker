@@ -85,7 +85,7 @@
         </tr>
     </tbody>
 </table>
-<button on:click={() => bookingTable.addBooking(new Booking("", ""))}> Add booking </button>
+<button on:click={() => bookingTable.addBooking(new Booking("00:00", "00:00"))}> Add booking </button>
 
 <style lang="scss">
     table.bookings {

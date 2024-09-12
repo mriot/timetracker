@@ -7,40 +7,51 @@
     <ul>
         <li>
             <div class="title">
-                <img src="/icon.svg" />
+                <img src="/icon.svg" on:dblclick={() => (debugMode = !debugMode)} />
                 <strong>TimeTracker</strong>
             </div>
         </li>
     </ul>
     <ul>
+        {#if debugMode}
+            <li>
+                <small>debug mode</small>
+            </li>
+        {/if}
         <li>
-            <details class="dropdown">
-                <summary>☰ Options</summary>
-                <ul>
-                    <li>
-                        <label>
-                            <input type="checkbox" bind:checked={showTaskManager} />
-                            Manage Tasks
-                        </label>
-                    </li>
-                    <li>
-                        <a href="#" on:click={() => confirm("Clear bookings?") && localStorage.removeItem("bookings")}>
-                            Clear bookings
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" on:click={() => confirm("Clear tasks?") && localStorage.removeItem("tasks")}>
-                            Clear tasks
-                        </a>
-                    </li>
-                    <li>
-                        <label>
-                            <input type="checkbox" bind:checked={debugMode} />
-                            Debug
-                        </label>
-                    </li>
-                </ul>
-            </details>
+            <a href="" on:click|preventDefault={() => (showTaskManager = !showTaskManager)}>
+                {#if showTaskManager}
+                    Close task manager
+                {:else}
+                    Show task manager
+                {/if}
+            </a>
+        </li>
+        <li>
+            <a
+                href=""
+                on:click|preventDefault={() => {
+                    if (confirm("Remove all bookings?")) {
+                        localStorage.removeItem("bookings");
+                        location.reload();
+                    }
+                }}
+            >
+                Reset bookings
+            </a>
+        </li>
+        <li>
+            <a
+                href=""
+                on:click|preventDefault={() => {
+                    if (confirm("Reset tasks to default?")) {
+                        localStorage.removeItem("tasks");
+                        location.reload();
+                    }
+                }}
+            >
+                Reset tasks
+            </a>
         </li>
     </ul>
 </nav>
