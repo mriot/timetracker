@@ -8,8 +8,6 @@
     let hasMounted: boolean = false;
     let totalWorkMinutes: number = 0;
 
-    let bookings: Booking[] = [];
-
     console.log("bookingsStore", $bookingsStore);
 
     onMount(() => {
@@ -95,7 +93,9 @@
                     <td>
                         <button
                             on:click={() => {
-                                confirm("Remove this row?") && booking.remove(); // TODO find a better way
+                                if (confirm("Remove this row?")) {
+                                    bookingsStore.update((rows) => rows.filter((row) => row.id !== booking.id));
+                                }
                             }}
                         >
                             <span>✕</span>
@@ -114,7 +114,7 @@
     <button
         on:click={() => {
             bookingsStore.update((rows) => {
-                rows.push(new Booking("", "", ""));
+                rows.push(new Booking("", ""));
                 return rows;
             });
         }}

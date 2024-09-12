@@ -1,5 +1,3 @@
-// import { bookingsStore } from "./store";
-
 export class Booking {
     id: number;
     duration: number | undefined;
@@ -54,7 +52,13 @@ export class Booking {
         return `${Math.floor(this.duration / 60)}h ${this.duration % 60}m (${(this.duration / 60).toFixed(2)}h)`;
     }
 
-    remove() {
-        // bookingsStore.update((rows) => rows.filter((row) => row.id !== this.id));
+    toJSON() {
+        return {
+            id: this.id,
+            duration: this.duration,
+            task: this.task,
+            from: this._from,
+            to: this._to,
+        };
     }
 }

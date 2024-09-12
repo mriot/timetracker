@@ -1,9 +1,9 @@
-import { writable, type Writable } from "svelte/store";
+import { derived, writable, type Writable } from "svelte/store";
 import { Booking } from "./booking";
 
-function localStorageStore<T>(key: string, mapFn: (item: any) => T) {
+function localStorageStore<T>(key: string, initialValue: T, mapFn: any) {
     let initialized = false;
-    const storedValue = localStorage.getItem(key);
+    const storedValue = localStorage.getItem(key) ?? JSON.stringify(initialValue);
     const data = storedValue && JSON.parse(storedValue).map(mapFn);
 
     const store = writable<T>(data);
@@ -19,5 +19,6 @@ function localStorageStore<T>(key: string, mapFn: (item: any) => T) {
 
 export const bookingsStore = localStorageStore<Booking[]>(
     "bookings",
-    (item: any) => new Booking(item._from, item._to, item.task)
+    [new Booking("", "")],
+    (item: any) => new Booking(item.from, item.to, item.task)
 );
