@@ -2,42 +2,43 @@ export class Booking {
     id: number;
     duration: number | undefined;
     task: string;
-    private _from: string;
-    private _to: string;
+    #from: string;
+    #to: string;
 
     constructor(from: string, to: string, task?: string, id?: number) {
         this.id = id ?? Math.floor(Math.random() * 9999);
-        this._from = from;
-        this._to = to;
+        this.#from = from;
+        this.#to = to;
         this.task = task ?? "";
         this.duration = this.getWorkMinutes();
     }
 
     set from(value: string) {
-        this._from = value;
+        this.#from = value;
         this.duration = this.getWorkMinutes();
     }
 
     get from(): string {
-        return this._from;
+        return this.#from;
     }
 
     set to(value: string) {
-        this._to = value;
+        this.#to = value;
         this.duration = this.getWorkMinutes();
     }
 
     get to(): string {
-        return this._to;
+        return this.#to;
     }
 
     getWorkMinutes(): number {
-        if (!this._from || !this._to) return 0;
+        if (!this.#from || !this.#to) return 0;
 
         const [startHours, startMinutes] = this.from.split(":").map(Number);
         const [endHours, endMinutes] = this.to.split(":").map(Number);
 
-        let elapsedMinutes = endHours * 60 + endMinutes - (startHours * 60 + startMinutes);
+        // TODO might change
+        let elapsedMinutes = (endHours ?? 0) * 60 + (endMinutes ?? 0) - ((startHours ?? 0) * 60 + (startMinutes ?? 0));
 
         // add 24 hours if we crossed midnight
         if (elapsedMinutes < 0) {
@@ -57,8 +58,8 @@ export class Booking {
             id: this.id,
             duration: this.duration,
             task: this.task,
-            from: this._from,
-            to: this._to,
+            from: this.#from,
+            to: this.#to,
         };
     }
 }
