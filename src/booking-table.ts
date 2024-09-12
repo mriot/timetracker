@@ -46,6 +46,10 @@ export class BookingTable {
         this.tasks.update((tasks) => tasks.filter((t) => t !== task));
     }
 
+    sortBookingsByTime() {
+        this.bookings.update((bookings) => bookings.sort((a, b) => a.from.localeCompare(b.from)));
+    }
+
     private getTotalWorkTime(): number {
         return get(this.bookings).reduce((acc, booking) => acc + booking.getWorkMinutes(), 0);
     }

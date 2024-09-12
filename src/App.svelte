@@ -86,7 +86,7 @@
                 <th>To</th>
                 <th>Duration</th>
                 <th>Task</th>
-                <th>Options</th>
+                <th></th>
                 {#if debugMode}
                     <th>ID</th>
                 {/if}
@@ -99,14 +99,7 @@
                         <input type="time" bind:value={booking.from} />
                     </td>
                     <td>
-                        <input
-                            type="time"
-                            bind:value={booking.to}
-                            on:blur={() => {
-                                console.log("Sorting");
-                                bookingsStore.update((rows) => rows.sort((a, b) => a.from.localeCompare(b.from)));
-                            }}
-                        />
+                        <input type="time" bind:value={booking.to} on:blur={() => bookingTable.sortBookingsByTime()} />
                     </td>
                     <td>{booking.formatDuration()}</td>
                     <td>
@@ -116,7 +109,7 @@
                             {/each}
                         </select>
                     </td>
-                    <td>
+                    <td class="center">
                         <button
                             on:click={() => {
                                 if (confirm("Remove this row?")) {
@@ -157,6 +150,11 @@
     }
 
     table.bookings {
+        th,
+        td {
+            text-align: center;
+        }
+
         input[type="time"],
         select {
             margin: 0;
@@ -171,6 +169,10 @@
         .total-work-time {
             text-align: center;
             border: none;
+        }
+
+        .center {
+            text-align: center;
         }
     }
 </style>
