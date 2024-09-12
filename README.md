@@ -1,5 +1,9 @@
 # TimeTracker
 
-A simple svelte app to track time spent on tasks.
+A simple time tracking app that collects zero data and operates entirely locally in your browser.
 
-<https://riotcoding.com/timetracker/>
+The current version is hosted at <https://riotcoding.com/timetracker>
+
+---
+
+Built with Svelte ❤️
