@@ -33,7 +33,7 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: /timetracker/assets/
         local-dir: ''
-        delete: true 
+        dangerous-clean-slate: true 
 
     - name: Upload dist folder to FTP server
       uses: SamKirkland/FTP-Deploy-Action@v4.3.1
