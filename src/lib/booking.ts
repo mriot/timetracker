@@ -45,6 +45,10 @@ export class Booking {
         return this.from.isFilled() && this.to.isFilled() && this.task.length > 0;
     }
 
+    isFromAndToSet(): boolean {
+        return this.from.isFilled() && this.to.isFilled();
+    }
+
     // TODO: add support for crossing midnight
     isBefore(other: Booking): boolean {
         return this.from.toMinutes() <= other.from.toMinutes();

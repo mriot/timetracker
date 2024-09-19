@@ -85,13 +85,13 @@ export class AppController {
     }
 
     sortBookingsByTime(triggeringBooking?: Booking) {
-        if (!triggeringBooking?.isReady() || triggeringBooking.isBeingEdited) {
+        if (!triggeringBooking?.isFromAndToSet() || triggeringBooking.isBeingEdited) {
             return;
         }
 
         this.bookings.update((bookings) => {
-            const unfinishedBookings = bookings.filter((booking) => !booking.isReady());
-            const finishedBookings = bookings.filter((booking) => booking.isReady());
+            const unfinishedBookings = bookings.filter((booking) => !booking.isFromAndToSet());
+            const finishedBookings = bookings.filter((booking) => booking.isFromAndToSet());
 
             const sortedBookings = finishedBookings.sort((bookingA, bookingB) => {
                 return bookingA.isBefore(bookingB) ? -1 : 1;
