@@ -28,8 +28,8 @@ jobs:
     - name: Upload dist folder to FTP server
       uses: SamKirkland/FTP-Deploy-Action@v4.3.1
       with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
+        server: $FTP_SERVER
+        username: $FTP_USERNAME
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist
         server-dir: /timetracker
