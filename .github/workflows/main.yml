@@ -25,6 +25,16 @@ jobs:
     - name: Build the Svelte app
       run: npm run build
 
+    - name: Clear assets directory on remote
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.1
+      with:
+        server: ${{ vars.FTP_SERVER }} 
+        username: ${{ vars.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: /timetracker/assets/
+        local-dir: ''
+        delete: true 
+
     - name: Upload dist folder to FTP server
       uses: SamKirkland/FTP-Deploy-Action@v4.3.1
       with:
