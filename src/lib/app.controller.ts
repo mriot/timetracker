@@ -132,8 +132,8 @@ export class AppController {
                 return null;
             }
 
-            // don't compare with bookings that are not fully filled out
-            if (!nextBooking.isReady()) {
+            // don't compare with bookings without from and to times set
+            if (!nextBooking.isFromAndToSet()) {
                 return null;
             }
 
