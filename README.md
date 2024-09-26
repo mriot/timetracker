@@ -2,7 +2,7 @@
 
 A simple time tracker that collects absolutely no data and runs entirely within your browser.
 
-Live demo <https://riotcoding.com/timetracker>
+Latest version is hosted here: <https://riotcoding.com/timetracker>
 
 ---
 
