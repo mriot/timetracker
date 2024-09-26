@@ -36,12 +36,13 @@
             </li>
         {/if}
         <li>
-            <a href="" on:click|preventDefault={() => (showTaskManager = !showTaskManager)}>
-                {#if showTaskManager}
-                    Close task manager
-                {:else}
-                    Show task manager
-                {/if}
+            <a
+                href=""
+                on:click|preventDefault={() => (showTaskManager = !showTaskManager)}
+                class="task-manager-toggle"
+                data-open={showTaskManager}
+            >
+                Task Manager
             </a>
         </li>
         <li>
@@ -54,7 +55,7 @@
                     if (confirm("Remove all bookings?")) appController.clearBookings();
                 }}
             >
-                Clear bookings
+                Clear Bookings
             </a>
         </li>
     </ul>
@@ -74,6 +75,25 @@
 
         img {
             width: 1.6rem;
+        }
+    }
+
+    .task-manager-toggle {
+        &::before {
+            content: "";
+            width: 1rem;
+            height: 1rem;
+            display: inline-block;
+            margin-right: 0.25rem;
+            transform: translateY(0.2rem);
+            background-image: var(--pico-icon-chevron);
+            background-size: contain;
+            background-position: bottom;
+            transition: transform 0.2s ease;
+        }
+
+        &[data-open="true"]::before {
+            transform: rotate3d(1, 0, 0, 180deg) translateY(-0.2rem);
         }
     }
 
