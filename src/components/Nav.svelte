@@ -17,6 +17,10 @@
 </script>
 
 <nav>
+    <a href="https://github.com/mriot/timetracker" class="github-link">
+        <img src="github.svg" alt="github logo" />
+    </a>
+
     <ul>
         <li>
             <div class="title">
@@ -53,22 +57,26 @@
                 Clear bookings
             </a>
         </li>
-        <li>
-            <a
-                href=""
-                on:click|preventDefault={() => {
-                    alert(
-                        "Free TimeTracker app that collects absolutely no data about you." +
-                            "\nEverything is stored in your browser's local storage." +
-                            "\n\nMade with Svelte."
-                    );
-                }}>About</a
-            >
-        </li>
     </ul>
 </nav>
 
 <style lang="scss">
+    .github-link {
+        position: absolute;
+        top: 0.25rem;
+        left: 0.25rem;
+        opacity: 0.2;
+        transition: opacity 0.2s;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        img {
+            width: 1.6rem;
+        }
+    }
+
     .title {
         display: flex;
         align-items: center;
