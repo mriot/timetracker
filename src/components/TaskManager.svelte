@@ -44,6 +44,16 @@
                 </button>
                 <button
                     disabled={!selectedTask}
+                    on:click={() => {
+                        const newName = prompt("Edit task name", selectedTask);
+                        if (newName) {
+                            appController.editTask(selectedTask, newName);
+                            selectedTask = newName;
+                        }
+                    }}>Edit</button
+                >
+                <button
+                    disabled={!selectedTask}
                     class="secondary"
                     on:click={() => {
                         confirm(`Delete task ${selectedTask}?`) && appController.removeTask(selectedTask);
@@ -57,7 +67,7 @@
                 <button
                     class="secondary"
                     on:click={() => {
-                        if (confirm("Reset tasks to default?\nThis will delete all custom tasks!")) {
+                        if (confirm("Reset tasks to default?\nThis will delete all custom tasks.")) {
                             appController.resetTasks();
                             selectedTask = "";
                         }

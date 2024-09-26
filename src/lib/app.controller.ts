@@ -57,6 +57,18 @@ export class AppController {
         this.tasks.update((tasks) => [task, ...tasks]);
     }
 
+    editTask(oldTask: string, newTask: string) {
+        this.tasks.update((tasks) => tasks.map((task) => (task === oldTask ? newTask : task)));
+        this.bookings.update((bookings) =>
+            bookings.map((booking) => {
+                if (booking.task === oldTask) {
+                    booking.task = newTask;
+                }
+                return booking;
+            })
+        );
+    }
+
     removeTask(task: string) {
         this.tasks.update((tasks) => tasks.filter((t) => t !== task));
     }
