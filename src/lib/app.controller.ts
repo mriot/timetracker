@@ -120,7 +120,7 @@ export class AppController {
             // NOTE: prevBooking is the current booking - IF there was an overlap previously
 
             // special case: start and end times on the same booking are equal
-            if (booking.from.toMinutes() === booking.to.toMinutes()) {
+            if (booking.isFromAndToSet() && booking.from.toMinutes() === booking.to.toMinutes()) {
                 booking.overlapsFrom = true;
                 booking.overlapsTo = true;
                 return booking;
