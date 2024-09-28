@@ -119,6 +119,13 @@ export class AppController {
         bookings.reduce((prevBooking: Booking | null, booking: Booking, idx: number, arr: Booking[]) => {
             // NOTE: prevBooking is the current booking - IF there was an overlap previously
 
+            // special case: start and end times on the same booking are equal
+            if (booking.from.toMinutes() === booking.to.toMinutes()) {
+                booking.overlapsFrom = true;
+                booking.overlapsTo = true;
+                return booking;
+            }
+
             // if we had no overlap in the previous iteration, we can reset the flags
             if (!prevBooking) {
                 booking.overlapsFrom = false;
@@ -132,7 +139,7 @@ export class AppController {
                 return null;
             }
 
-            // don't compare with bookings without from and to times set
+            // don't compare with bookings where the times are not set
             if (!nextBooking.isFromAndToSet()) {
                 return null;
             }
