@@ -141,10 +141,13 @@
             margin: 0;
             height: auto;
             padding: 0.5em;
+            text-align: center;
+            min-width: 150px;
+        }
 
-            &:not(select) {
-                text-align: center;
-            }
+        select {
+            text-align: left;
+            max-width: 500px;
         }
 
         .total-work-time {

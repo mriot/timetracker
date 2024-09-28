@@ -82,6 +82,13 @@
             &:not(:last-child) {
                 border-right: 1px solid var(--pico-muted-border-color);
             }
+
+            span {
+                max-width: 10rem;
+                overflow: hidden;
+                display: inline-block;
+                text-overflow: ellipsis;
+            }
         }
     }
 
