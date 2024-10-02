@@ -85,5 +85,6 @@
         display: flex;
         justify-content: space-between;
         white-space: nowrap;
+        cursor: default;
     }
 </style>
