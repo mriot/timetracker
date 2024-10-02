@@ -1,0 +1,35 @@
+name: FTP Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.11'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build the Svelte app
+      run: npm run build
+
+    - name: Upload dist folder to FTP server
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.1
+      with:
+        server: ${{ vars.FTP_SERVER }}
+        username: ${{ vars.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./dist/
+        server-dir: ${{ vars.REMOTE_DIR }}
