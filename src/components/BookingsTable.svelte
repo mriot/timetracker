@@ -9,6 +9,7 @@
     import type { AppController } from "../lib/app.controller";
     import { Booking } from "../lib/booking";
     import { bookingsStore, tasksStore } from "../stores/store";
+    import ButtonWrapper from "./common/ButtonWrapper.svelte";
 
     export let appController: AppController;
     export let totalWorkTimeStore: Readable<string>;
@@ -122,12 +123,22 @@
         </tr> -->
     </tbody>
 </table>
-<button
+
+<ButtonWrapper>
+    <button
+        on:click={() => appController.addBooking(new Booking("", ""))}
+        use:keybind={{ ctrl: true, shift: true, key: "a", trigger: "click" }}
+    >
+        Add booking
+    </button>
+</ButtonWrapper>
+
+<!-- <button
     on:click={() => appController.addBooking(new Booking("", ""))}
     use:keybind={{ ctrl: true, shift: true, key: "a", trigger: "click" }}
 >
     Add booking
-</button>
+</button> -->
 
 <style lang="scss">
     table.bookings {

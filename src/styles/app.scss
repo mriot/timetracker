@@ -14,3 +14,15 @@ html,
 body {
     margin: 0.5rem 0;
 }
+
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"]{
+    background-color: var(--pico-form-element-background-color);
+    border-color: var(--pico-form-element-border-color);
+
+    &:hover {
+        background-color: var(--pico-dropdown-hover-background-color);
+    }
+}
